@@ -1,0 +1,288 @@
+// Favorites Matcher: pick Pokémon, see which items appeal to them, tiered by coverage.
+const Matcher = (() => {
+  const COLORS = ["#e63946","#48cae4","#a855f7","#22c55e","#f97316","#ec4899","#14b8a6","#eab308",
+    "#6366f1","#ef4444","#0ea5e9","#8b5cf6","#f43f5e","#06b6d4","#d946ef","#84cc16",
+    "#fb923c","#f472b6","#2dd4bf","#fbbf24","#818cf8","#fb7185","#38bdf8","#c084fc"];
+
+  let data = null;
+  const selected = []; // [{name, favorites}]
+  let mode = "all"; // 'all' | 'shared'
+  let typeFilter = "all";
+  let highlightIdx = -1;
+
+  function esc(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function init(pokopiaData) {
+    data = pokopiaData;
+    const root = document.getElementById("view-matcher");
+    root.innerHTML = `
+      <div class="container">
+        <div class="card poke-section">
+          <h2>Pokémon <span class="sub">(type to search, click to add)</span></h2>
+          <div class="poke-input-row">
+            <div class="poke-search" id="poke-search">
+              <input type="text" id="poke-input" placeholder="Type a Pokémon name…" autocomplete="off">
+              <div class="dropdown" id="poke-dropdown"></div>
+            </div>
+            <button class="clear-all" id="clear-all">Clear all</button>
+          </div>
+          <div class="selected-pokemon" id="selected-pokemon"></div>
+        </div>
+
+        <div class="legend" id="legend" style="display:none"></div>
+
+        <input type="text" class="search-box" id="item-search" placeholder="Filter items by name…">
+
+        <div class="mode-row">
+          <span class="lbl">Show:</span>
+          <button class="chip act" data-m="all">All matches</button>
+          <button class="chip" data-m="shared">Appeals to all</button>
+        </div>
+        <div class="mode-row" id="type-filter">
+          <span class="lbl">Item type:</span>
+          <button class="chip act" data-t="all">All</button>
+          <button class="chip" data-t="relaxation">Relaxation</button>
+          <button class="chip" data-t="decor">Decor</button>
+          <button class="chip" data-t="toy">Toy</button>
+          <button class="chip" data-t="road">Road</button>
+        </div>
+
+        <div class="rh">
+          <h2>Results</h2>
+          <span class="stats" id="stats"></span>
+        </div>
+        <div id="results"></div>
+      </div>
+    `;
+
+    const input = document.getElementById("poke-input");
+    const dropdown = document.getElementById("poke-dropdown");
+
+    input.addEventListener("input", () => {
+      const val = input.value.toLowerCase().trim();
+      highlightIdx = -1;
+      if (!val) { dropdown.classList.remove("show"); return; }
+      const matches = data.pokemon
+        .filter((p) => p.name.toLowerCase().includes(val) && !selected.find((s) => s.name === p.name))
+        .slice(0, 10);
+      if (!matches.length) { dropdown.classList.remove("show"); return; }
+      dropdown.innerHTML = matches.map((p) =>
+        `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:#888;font-size:11px">(${p.favorites.length} favorites)</span></div>`
+      ).join("");
+      dropdown.classList.add("show");
+      dropdown.querySelectorAll(".dropdown-item").forEach((el) => {
+        el.onclick = () => addPokemon(el.dataset.name);
+      });
+    });
+
+    input.addEventListener("keydown", (e) => {
+      const items = dropdown.querySelectorAll(".dropdown-item");
+      if (!items.length) return;
+      if (e.key === "ArrowDown") { e.preventDefault(); highlightIdx = Math.min(highlightIdx + 1, items.length - 1); updateHighlight(items); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); highlightIdx = Math.max(highlightIdx - 1, 0); updateHighlight(items); }
+      else if (e.key === "Enter" && highlightIdx >= 0) { e.preventDefault(); addPokemon(items[highlightIdx].dataset.name); }
+    });
+
+    input.addEventListener("paste", (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData("text");
+      if (!text.includes(",")) return;
+      e.preventDefault();
+      let added = 0;
+      text.split(",").map((s) => s.trim()).filter(Boolean).forEach((name) => {
+        const poke = data.pokemon.find((p) => p.name.toLowerCase() === name.toLowerCase());
+        if (poke && !selected.find((s) => s.name === poke.name)) {
+          selected.push({ name: poke.name, favorites: poke.favorites });
+          added++;
+        }
+      });
+      input.value = "";
+      dropdown.classList.remove("show");
+      if (added > 0) { renderSelected(); render(); }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#poke-search")) dropdown.classList.remove("show");
+    });
+
+    document.getElementById("clear-all").onclick = clearAll;
+    document.getElementById("item-search").addEventListener("input", render);
+
+    document.querySelectorAll(".mode-row .chip[data-m]").forEach((chip) => {
+      chip.onclick = () => {
+        mode = chip.dataset.m;
+        document.querySelectorAll(".chip[data-m]").forEach((c) => c.classList.toggle("act", c.dataset.m === mode));
+        render();
+      };
+    });
+    document.querySelectorAll("#type-filter .chip[data-t]").forEach((chip) => {
+      chip.onclick = () => {
+        typeFilter = chip.dataset.t;
+        document.querySelectorAll("#type-filter .chip").forEach((c) => c.classList.toggle("act", c.dataset.t === typeFilter));
+        render();
+      };
+    });
+
+    render();
+  }
+
+  function updateHighlight(items) {
+    items.forEach((el, i) => el.classList.toggle("highlighted", i === highlightIdx));
+  }
+
+  function addPokemon(name) {
+    const poke = data.pokemon.find((p) => p.name === name);
+    if (!poke || selected.find((s) => s.name === name)) return;
+    selected.push({ name: poke.name, favorites: poke.favorites });
+    document.getElementById("poke-input").value = "";
+    document.getElementById("poke-dropdown").classList.remove("show");
+    renderSelected();
+    render();
+  }
+
+  function removePokemon(name) {
+    const idx = selected.findIndex((s) => s.name === name);
+    if (idx >= 0) selected.splice(idx, 1);
+    renderSelected();
+    render();
+  }
+
+  function clearAll() {
+    selected.length = 0;
+    renderSelected();
+    render();
+  }
+
+  function renderSelected() {
+    const container = document.getElementById("selected-pokemon");
+    const legend = document.getElementById("legend");
+    if (!selected.length) {
+      container.innerHTML = "";
+      legend.style.display = "none";
+      return;
+    }
+    container.innerHTML = selected.map((s, i) => {
+      const col = COLORS[i % COLORS.length];
+      return `<div class="poke-tag" style="background:${col}20;border-color:${col};color:${col}">
+        ${esc(s.name)} <span class="fav-count">(${s.favorites.length})</span>
+        <span class="remove" data-name="${esc(s.name)}">&times;</span></div>`;
+    }).join("");
+    container.querySelectorAll(".remove").forEach((el) => {
+      el.onclick = () => removePokemon(el.dataset.name);
+    });
+
+    legend.style.display = "flex";
+    legend.innerHTML = selected.map((s, i) => {
+      const col = COLORS[i % COLORS.length];
+      return `<div class="legend-item"><span class="legend-dot" style="background:${col}"></span><strong style="color:${col}">${esc(s.name)}:</strong> ${esc(s.favorites.join(", "))}</div>`;
+    }).join("");
+  }
+
+  function render() {
+    const searchTerm = document.getElementById("item-search").value.toLowerCase();
+    const res = document.getElementById("results");
+
+    if (!selected.length) {
+      res.innerHTML = '<div class="empty">Add Pokémon above to see which items appeal to them</div>';
+      document.getElementById("stats").textContent = "";
+      return;
+    }
+
+    const scored = [];
+    data.items.forEach((item) => {
+      if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
+      if (typeFilter !== "all" && (item.type || "other") !== typeFilter) return;
+
+      const perPoke = [];
+      let totalHits = 0;
+      let pokemonMatched = 0;
+      const hitMap = {};
+
+      selected.forEach((poke, pi) => {
+        const hits = item.tags.filter((cat) => poke.favorites.includes(cat));
+        perPoke.push(hits);
+        totalHits += hits.length;
+        if (hits.length > 0) pokemonMatched++;
+        hits.forEach((cat) => {
+          (hitMap[cat] = hitMap[cat] || []).push(pi);
+        });
+      });
+
+      if (totalHits === 0) return;
+      if (mode === "shared" && pokemonMatched < selected.length) return;
+
+      const minScore = Math.min(...perPoke.map((h) => h.length));
+      scored.push({ item, perPoke, totalHits, pokemonMatched, minScore, hitMap });
+    });
+
+    scored.sort((a, b) => {
+      if (b.pokemonMatched !== a.pokemonMatched) return b.pokemonMatched - a.pokemonMatched;
+      if (b.minScore !== a.minScore) return b.minScore - a.minScore;
+      if (b.totalHits !== a.totalHits) return b.totalHits - a.totalHits;
+      return a.item.name.localeCompare(b.item.name);
+    });
+
+    if (!scored.length) {
+      res.innerHTML = '<div class="empty">No items match the current filters</div>';
+      document.getElementById("stats").textContent = "";
+      return;
+    }
+
+    document.getElementById("stats").textContent = scored.length + " items matched";
+
+    const tiers = [];
+    let prevKey = "";
+    scored.forEach((s) => {
+      const key = s.pokemonMatched + "-" + s.minScore + "-" + s.totalHits;
+      if (key !== prevKey) {
+        tiers.push({ pokemonMatched: s.pokemonMatched, minScore: s.minScore, totalHits: s.totalHits, items: [] });
+        prevKey = key;
+      }
+      tiers[tiers.length - 1].items.push(s);
+    });
+
+    let h = "";
+    tiers.forEach((t) => {
+      const allMatched = t.pokemonMatched === selected.length;
+      const tierClass = allMatched && t.minScore >= 2 ? "tier-s" : allMatched ? "tier-a" : t.pokemonMatched > 1 ? "tier-b" : "tier-c";
+      const label = allMatched
+        ? `All ${selected.length} pokémon (${t.totalHits} total hits, min ${t.minScore} per pokémon)`
+        : `${t.pokemonMatched} of ${selected.length} pokémon (${t.totalHits} total hits)`;
+
+      h += `<div class="tier"><div class="tier-label ${tierClass}">${label}<span class="cnt">(${t.items.length} items)</span></div><div class="tier-items">`;
+
+      t.items.forEach((s) => {
+        h += `<div class="item-row"><div><div class="item-name">${esc(s.item.name)}</div><div class="item-desc">${esc(s.item.description)}</div></div><div class="item-tags">`;
+        s.item.tags.forEach((cat) => {
+          const pokeIndices = s.hitMap[cat] || [];
+          if (pokeIndices.length === 0) {
+            h += `<span class="tag tag-neutral">${esc(cat)}</span>`;
+          } else if (pokeIndices.length === 1) {
+            const col = COLORS[pokeIndices[0] % COLORS.length];
+            h += `<span class="tag" style="background:${col}20;color:${col};border:1px solid ${col}50">${esc(cat)}</span>`;
+          } else {
+            const cols = pokeIndices.map((i) => COLORS[i % COLORS.length]);
+            const grad = cols.map((c, i) => `${c}30 ${(i * 100) / (cols.length - 1)}%`).join(",");
+            h += `<span class="tag" style="background:linear-gradient(135deg,${grad});color:#fff;border:1px solid #a855f780">${esc(cat)} (${pokeIndices.length})</span>`;
+          }
+        });
+        h += '</div><div class="scores">';
+        selected.forEach((poke, pi) => {
+          const col = COLORS[pi % COLORS.length];
+          const score = s.perPoke[pi].length;
+          h += `<span class="score-badge" style="background:${col}20;color:${col}">${esc(poke.name.substring(0, 8))}:${score}</span>`;
+        });
+        h += "</div></div>";
+      });
+
+      h += "</div></div>";
+    });
+
+    res.innerHTML = h;
+  }
+
+  return { init };
+})();

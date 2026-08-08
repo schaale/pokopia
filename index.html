@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokopia Companion</title>
+<meta name="description" content="Find the best furniture for your Pokopia habitats: match items to your Pokémon's favorites, or explore data-driven habitat build recommendations.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏡</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>Pokopia Companion</h1>
+  <p class="tagline">Match items to your Pokémon's favorites, or explore optimal habitat builds</p>
+</header>
+
+<nav class="page-tabs" id="page-tabs">
+  <button class="page-tab act" data-view="matcher">🔍 Matcher</button>
+  <button class="page-tab" data-view="optimizer">📊 Optimizer</button>
+</nav>
+
+<main>
+  <section class="page-view act" id="view-matcher"></section>
+  <section class="page-view" id="view-optimizer"></section>
+</main>
+
+<footer class="site-footer">
+  <p id="data-meta">Loading data…</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/matcher.js"></script>
+<script src="js/optimizer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
