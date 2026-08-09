@@ -31,9 +31,9 @@ data/pokopia-data.json  categories, items, and Pokémon (with favorites + ideal 
 
 ## Data provenance
 
-`data/pokopia-data.json` was consolidated from an earlier set of single-file prototypes (a Favorites Matcher, a Habitat Optimizer, and a SQLite export) built from community, Serebii-based research: 556 items, 308 Pokémon, 43 preference categories, and a per-Pokémon ideal habitat. The dataset reflects the game's state as of **2025-04-18** (`data.meta.sourceDate`).
+`data/pokopia-data.json` was rebuilt from a full set of individually-saved Serebii "Favorites" pages — one per preference category (all 43), each listing every item and every Pokémon that has that category as a favorite. Current counts: 726 items, 365 Pokémon, 43 preference categories, a per-Pokémon ideal habitat, and (unused by the UI so far, but included) a per-Pokémon "specialty" job tag. Reflects the game's state as of **2026-08-09** (`data.meta.sourceDate`).
 
-Live sites for the shipped game (Serebii, Game8, community wikis) weren't reachable from this environment to verify the data is still current, so treat item/Pokémon counts as a snapshot rather than up to the minute. Pokémon counts (308) are close to public reporting of ~300–311 as of mid-2026, which suggests the roster hasn't drifted far — but new seasonal/event furniture is the most likely gap. If you have access to a current export, replace `data/pokopia-data.json` (keeping the same shape) and everything else keeps working unchanged.
+A small number of items (19) and one Pokémon (Ditto) don't appear on any of the 43 category pages — either because they have zero favorite tags (Ditto) or because their tags are terrain/road pieces outside the 43 preference categories — so they're carried over unchanged from the prior snapshot rather than dropped. If you have a newer export, replace `data/pokopia-data.json` (keeping the same shape) and everything else keeps working unchanged.
 
 ## Local development
 
