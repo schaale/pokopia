@@ -36,7 +36,7 @@ const Optimizer = (() => {
     if (n <= 9) return 9;
     if (n <= 12) return 6;
     if (n <= 16) return 4;
-    return 2;
+    return 3; // floor of 3: every zone needs at least 1 decor + 1 relaxation + 1 toy
   }
 
   function blueprintCombos() {
@@ -55,37 +55,58 @@ const Optimizer = (() => {
     return data.pokemon.filter((p) => p.favorites.length && poles.includes(p.habitat));
   }
 
-  // Greedy max-coverage: repeatedly add the item that pushes the most pokemon past
-  // SAT_THRESHOLD (ties broken by total QP added), until the budget is spent.
+  // Picks the single item (optionally restricted to `typeFilter`) that pushes the most
+  // pokemon past SAT_THRESHOLD, ties broken by total QP added. Used as the shared step
+  // logic for both the mandatory type-coverage phase and the free-pick phase below.
+  function pickBestItem(state, pool, used, typeFilter) {
+    let best = null;
+    for (const item of pool) {
+      if (used.has(item.id)) continue;
+      if (typeFilter && item.type !== typeFilter) continue;
+      let newSat = 0;
+      let gain = 0;
+      for (const s of state) {
+        const q = qp(s.p, item);
+        gain += q;
+        if (s.qp < SAT_THRESHOLD && s.qp + q >= SAT_THRESHOLD) newSat++;
+      }
+      if (!best || newSat > best.newSat || (newSat === best.newSat && gain > best.gain)) {
+        best = { item, newSat, gain };
+      }
+    }
+    return best;
+  }
+
+  // Greedy max-coverage, constrained so every zone ends up with at least one Decor,
+  // one Relaxation, and one Toy item (required — a zone isn't "furnished" without all
+  // three), then spends any remaining budget maximizing how many pokemon reach
+  // SAT_THRESHOLD (ties broken by total QP added).
   function bestItemSet(pokemonGroup, budget, pool) {
     const state = pokemonGroup.map((p) => ({ p, qp: 0 }));
     const chosen = [];
     const used = new Set();
-    for (let step = 0; step < budget; step++) {
-      let bestItem = null;
-      let bestNewSat = -1;
-      let bestGain = -1;
-      for (const item of pool) {
-        if (used.has(item.id)) continue;
-        let newSat = 0;
-        let gain = 0;
-        for (const s of state) {
-          const q = qp(s.p, item);
-          gain += q;
-          if (s.qp < SAT_THRESHOLD && s.qp + q >= SAT_THRESHOLD) newSat++;
-        }
-        if (newSat > bestNewSat || (newSat === bestNewSat && gain > bestGain)) {
-          bestNewSat = newSat;
-          bestGain = gain;
-          bestItem = item;
-        }
-      }
-      if (!bestItem || (bestNewSat <= 0 && bestGain <= 0)) break;
-      used.add(bestItem.id);
-      chosen.push(bestItem);
-      state.forEach((s) => (s.qp += qp(s.p, bestItem)));
+
+    // Phase 1: mandatory — one item per required type, even if it's not the globally
+    // best pick available, so the type slot is never left empty.
+    for (const type of PLACEABLE_TYPES) {
+      if (chosen.length >= budget) break;
+      const pick = pickBestItem(state, pool, used, type);
+      if (!pick) continue; // no items of this type in the pool at all
+      used.add(pick.item.id);
+      chosen.push(pick.item);
+      state.forEach((s) => (s.qp += qp(s.p, pick.item)));
+    }
+
+    // Phase 2: free pick for whatever budget remains.
+    for (let step = chosen.length; step < budget; step++) {
+      const pick = pickBestItem(state, pool, used, null);
+      if (!pick || pick.gain <= 0) break;
+      used.add(pick.item.id);
+      chosen.push(pick.item);
+      state.forEach((s) => (s.qp += qp(s.p, pick.item)));
       if (state.every((s) => s.qp >= SAT_THRESHOLD)) break;
     }
+
     return { chosen, state };
   }
 
@@ -300,7 +321,7 @@ const Optimizer = (() => {
     panel.innerHTML = `
       <div class="info-box">
         <div class="info-title">📐 How grouping works</div>
-        <p>Pokémon that like similar things are clustered together so they can share one small item set. As a group grows, the item budget for its shared space shrinks (bigger shared area, fewer items fit): groups of ≤4 get 16 items, ≤9 get 9, ≤12 get 6, ≤16 get 4, and beyond that just 2. Pick a habitat combination below to see the suggested groups and their item sets.</p>
+        <p>Pokémon that like similar things are clustered together so they can share one small item set. As a group grows, the item budget for its shared space shrinks (bigger shared area, fewer items fit): groups of ≤4 get 16 items, ≤9 get 9, ≤12 get 6, ≤16 get 4, and beyond that a floor of 3. Every zone always gets at least one Decor, one Relaxation, and one Toy item — the remaining budget (if any) goes to whatever maximizes how many Pokémon reach the moving-in threshold. Pick a habitat combination below to see the suggested groups and their item sets.</p>
       </div>
       <div class="blueprint-picker" id="bp-picker"></div>
       <div id="grp-results"></div>
