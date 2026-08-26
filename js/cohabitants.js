@@ -96,6 +96,14 @@ const Cohabitants = (() => {
     return pairs;
   }
 
+  function debounce(fn, wait) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
+
   function openInMatcher(names) {
     Matcher.setSelection(names);
     const tab = document.querySelector('#page-tabs .page-tab[data-view="matcher"]');
@@ -129,7 +137,11 @@ const Cohabitants = (() => {
       const matches = data.pokemon
         .filter((p) => p.favorites.length && p.name.toLowerCase().includes(val) && !isTaken(p.name))
         .slice(0, 10);
-      if (!matches.length) { dropdown.classList.remove("show"); return; }
+      if (!matches.length) {
+        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:#666">No Pokémon found</div>';
+        dropdown.classList.add("show");
+        return;
+      }
       dropdown.innerHTML = matches.map((p) =>
         `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:#888;font-size:11px">(${habitatIconFor(p)})</span></div>`
       ).join("");
@@ -417,6 +429,9 @@ const Cohabitants = (() => {
         <div class="opt-panel act" id="coh-find">
           <div class="card poke-section">
             <h2>Pokémon already living there <span class="sub">(or just the one you're moving — type to search, click to add)</span></h2>
+            <div class="selected-pokemon" id="coh-selected"></div>
+            <div id="coh-conflict-warning"></div>
+            <button class="link-btn" id="coh-open-matcher" style="margin-top:8px;margin-bottom:8px">🔍 Open this group in Matcher</button>
             <div class="poke-input-row">
               <div class="poke-search" id="coh-search">
                 <input type="text" id="coh-input" placeholder="Type a Pokémon name…" autocomplete="off">
@@ -424,9 +439,6 @@ const Cohabitants = (() => {
               </div>
               <button class="clear-all" id="coh-clear">Clear all</button>
             </div>
-            <div class="selected-pokemon" id="coh-selected"></div>
-            <div id="coh-conflict-warning"></div>
-            <button class="link-btn" id="coh-open-matcher" style="margin-top:8px">🔍 Open this group in Matcher</button>
           </div>
 
           <p class="hint">Habitat-compatible candidates are ranked by average overlap of favorite tags with everyone already selected, then spot-checked against the best shared item set (1 Decor + 1 Relaxation + 1 Toy, plus free picks up to ${MAX_ITEM_SET} items or until everyone clears the moving-in threshold of ${SAT_THRESHOLD} QP — same model as the Optimizer). Feasibility is computed for the top ${PREFILTER} matches by overlap.</p>
@@ -443,13 +455,13 @@ const Cohabitants = (() => {
         <div class="opt-panel" id="coh-compare">
           <div class="card poke-section">
             <h2>Pokémon that needs a home <span class="sub">(pick one)</span></h2>
+            <div class="selected-pokemon" id="target-selected"></div>
             <div class="poke-input-row">
               <div class="poke-search" id="target-search">
                 <input type="text" id="target-input" placeholder="Type a Pokémon name…" autocomplete="off">
                 <div class="dropdown" id="target-dropdown"></div>
               </div>
             </div>
-            <div class="selected-pokemon" id="target-selected"></div>
           </div>
 
           <div class="card poke-section">
@@ -483,7 +495,7 @@ const Cohabitants = (() => {
       renderGroupChips();
       renderFindResults();
     };
-    document.getElementById("coh-name-search").addEventListener("input", renderFindResults);
+    document.getElementById("coh-name-search").addEventListener("input", debounce(renderFindResults, 150));
     document.getElementById("coh-toggle-conflicts").onclick = () => {
       showConflicts = !showConflicts;
       renderFindResults();

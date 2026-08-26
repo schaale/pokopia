@@ -23,6 +23,7 @@ const Matcher = (() => {
       <div class="container">
         <div class="card poke-section">
           <h2>Pokémon <span class="sub">(type to search, click to add)</span></h2>
+          <div class="selected-pokemon" id="selected-pokemon"></div>
           <div class="poke-input-row">
             <div class="poke-search" id="poke-search">
               <input type="text" id="poke-input" placeholder="Type a Pokémon name…" autocomplete="off">
@@ -30,25 +31,26 @@ const Matcher = (() => {
             </div>
             <button class="clear-all" id="clear-all">Clear all</button>
           </div>
-          <div class="selected-pokemon" id="selected-pokemon"></div>
         </div>
 
         <div class="legend" id="legend" style="display:none"></div>
 
-        <input type="text" class="search-box" id="item-search" placeholder="Filter items by name…">
+        <div id="matcher-controls" style="display:none">
+          <input type="text" class="search-box" id="item-search" placeholder="Filter items by name…">
 
-        <div class="mode-row">
-          <span class="lbl">Show:</span>
-          <button class="chip act" data-m="all">All matches</button>
-          <button class="chip" data-m="shared">Appeals to all</button>
-        </div>
-        <div class="mode-row" id="type-filter">
-          <span class="lbl">Item type:</span>
-          <button class="chip act" data-t="all">All</button>
-          <button class="chip" data-t="relaxation">Relaxation</button>
-          <button class="chip" data-t="decor">Decor</button>
-          <button class="chip" data-t="toy">Toy</button>
-          <button class="chip" data-t="road">Road</button>
+          <div class="mode-row">
+            <span class="lbl">Show:</span>
+            <button class="chip act" data-m="all">All matches</button>
+            <button class="chip" data-m="shared">Appeals to all</button>
+          </div>
+          <div class="mode-row" id="type-filter">
+            <span class="lbl">Item type:</span>
+            <button class="chip act" data-t="all">All</button>
+            <button class="chip" data-t="relaxation">Relaxation</button>
+            <button class="chip" data-t="decor">Decor</button>
+            <button class="chip" data-t="toy">Toy</button>
+            <button class="chip" data-t="road">Road</button>
+          </div>
         </div>
 
         <div class="rh">
@@ -69,7 +71,11 @@ const Matcher = (() => {
       const matches = data.pokemon
         .filter((p) => p.name.toLowerCase().includes(val) && !selected.find((s) => s.name === p.name))
         .slice(0, 10);
-      if (!matches.length) { dropdown.classList.remove("show"); return; }
+      if (!matches.length) {
+        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:#666">No Pokémon found</div>';
+        dropdown.classList.add("show");
+        return;
+      }
       dropdown.innerHTML = matches.map((p) =>
         `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:#888;font-size:11px">(${p.favorites.length} favorites)</span></div>`
       ).join("");
@@ -126,6 +132,15 @@ const Matcher = (() => {
       };
     });
 
+    document.getElementById("results").addEventListener("click", (e) => {
+      const btn = e.target.closest(".tier-toggle");
+      if (!btn) return;
+      const target = document.getElementById(btn.dataset.target);
+      const expand = target.style.display === "none";
+      target.style.display = expand ? "" : "none";
+      btn.textContent = expand ? "Show less ←" : `Show ${btn.dataset.remaining} more →`;
+    });
+
     render();
   }
 
@@ -171,6 +186,7 @@ const Matcher = (() => {
   function renderSelected() {
     const container = document.getElementById("selected-pokemon");
     const legend = document.getElementById("legend");
+    document.getElementById("matcher-controls").style.display = selected.length ? "" : "none";
     if (!selected.length) {
       container.innerHTML = "";
       legend.style.display = "none";
@@ -256,8 +272,34 @@ const Matcher = (() => {
       tiers[tiers.length - 1].items.push(s);
     });
 
+    function renderItemRow(s) {
+      let row = `<div class="item-row"><div><div class="item-name">${esc(s.item.name)}</div><div class="item-desc">${esc(s.item.description)}</div></div><div class="item-tags">`;
+      s.item.tags.forEach((cat) => {
+        const pokeIndices = s.hitMap[cat] || [];
+        if (pokeIndices.length === 0) {
+          row += `<span class="tag tag-neutral">${esc(cat)}</span>`;
+        } else if (pokeIndices.length === 1) {
+          const col = COLORS[pokeIndices[0] % COLORS.length];
+          row += `<span class="tag" style="background:${col}20;color:${col};border:1px solid ${col}50">${esc(cat)}</span>`;
+        } else {
+          const cols = pokeIndices.map((i) => COLORS[i % COLORS.length]);
+          const grad = cols.map((c, i) => `${c}30 ${(i * 100) / (cols.length - 1)}%`).join(",");
+          row += `<span class="tag" style="background:linear-gradient(135deg,${grad});color:#fff;border:1px solid #a855f780">${esc(cat)} (${pokeIndices.length})</span>`;
+        }
+      });
+      row += '</div><div class="scores">';
+      selected.forEach((poke, pi) => {
+        const col = COLORS[pi % COLORS.length];
+        const score = s.perPoke[pi].length;
+        row += `<span class="score-badge" style="background:${col}20;color:${col}">${esc(poke.name.substring(0, 8))}:${score}</span>`;
+      });
+      row += "</div></div>";
+      return row;
+    }
+
+    const TIER_PREVIEW = 8;
     let h = "";
-    tiers.forEach((t) => {
+    tiers.forEach((t, ti) => {
       const allMatched = t.pokemonMatched === selected.length;
       const tierClass = allMatched && t.minScore >= 2 ? "tier-s" : allMatched ? "tier-a" : t.pokemonMatched > 1 ? "tier-b" : "tier-c";
       const label = allMatched
@@ -266,29 +308,16 @@ const Matcher = (() => {
 
       h += `<div class="tier"><div class="tier-label ${tierClass}">${label}<span class="cnt">(${t.items.length} items)</span></div><div class="tier-items">`;
 
-      t.items.forEach((s) => {
-        h += `<div class="item-row"><div><div class="item-name">${esc(s.item.name)}</div><div class="item-desc">${esc(s.item.description)}</div></div><div class="item-tags">`;
-        s.item.tags.forEach((cat) => {
-          const pokeIndices = s.hitMap[cat] || [];
-          if (pokeIndices.length === 0) {
-            h += `<span class="tag tag-neutral">${esc(cat)}</span>`;
-          } else if (pokeIndices.length === 1) {
-            const col = COLORS[pokeIndices[0] % COLORS.length];
-            h += `<span class="tag" style="background:${col}20;color:${col};border:1px solid ${col}50">${esc(cat)}</span>`;
-          } else {
-            const cols = pokeIndices.map((i) => COLORS[i % COLORS.length]);
-            const grad = cols.map((c, i) => `${c}30 ${(i * 100) / (cols.length - 1)}%`).join(",");
-            h += `<span class="tag" style="background:linear-gradient(135deg,${grad});color:#fff;border:1px solid #a855f780">${esc(cat)} (${pokeIndices.length})</span>`;
-          }
-        });
-        h += '</div><div class="scores">';
-        selected.forEach((poke, pi) => {
-          const col = COLORS[pi % COLORS.length];
-          const score = s.perPoke[pi].length;
-          h += `<span class="score-badge" style="background:${col}20;color:${col}">${esc(poke.name.substring(0, 8))}:${score}</span>`;
-        });
-        h += "</div></div>";
-      });
+      const visible = t.items.slice(0, TIER_PREVIEW);
+      const hidden = t.items.slice(TIER_PREVIEW);
+      visible.forEach((s) => { h += renderItemRow(s); });
+
+      if (hidden.length) {
+        h += `<div class="tier-hidden" id="tier-hidden-${ti}" style="display:none">`;
+        hidden.forEach((s) => { h += renderItemRow(s); });
+        h += "</div>";
+        h += `<button class="link-btn tier-toggle" data-target="tier-hidden-${ti}" data-remaining="${hidden.length}" style="display:block;margin:8px 14px">Show ${hidden.length} more →</button>`;
+      }
 
       h += "</div></div>";
     });

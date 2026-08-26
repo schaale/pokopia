@@ -169,6 +169,7 @@ textarea { width: 100%; resize: vertical; }
 .dropdown-item { padding: 8px 12px; cursor: pointer; font-size: 13px; }
 .dropdown-item:hover, .dropdown-item.highlighted { background: var(--border); color: var(--accent); }
 .selected-pokemon { display: flex; flex-wrap: wrap; gap: 8px; }
+.selected-pokemon:not(:empty) { margin-bottom: 12px; }
 .poke-tag {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
   border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid; cursor: default;
@@ -229,7 +230,7 @@ textarea { width: 100%; resize: vertical; }
 .bp-item-name { color: var(--text); }
 .bp-item-stat { color: var(--text-dim); white-space: nowrap; }
 
-.ie-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.ie-table-wrap { overflow: auto; max-height: 70vh; border: 1px solid var(--border); border-radius: var(--radius); }
 .ie-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 720px; }
 .ie-table th { text-align: left; padding: 8px 10px; color: var(--accent); border-bottom: 1px solid var(--border); font-weight: 600; background: var(--panel-alt); position: sticky; top: 0; }
 .ie-table td { padding: 8px 10px; border-bottom: 1px solid #1e1e3a; color: #ccc; vertical-align: top; background: var(--panel); }
@@ -263,6 +264,20 @@ textarea { width: 100%; resize: vertical; }
 .items-table tr:last-child td { border-bottom: none; }
 
 .blueprint-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+@media (max-width: 640px) {
+  .ie-table-wrap::before {
+    content: "⟷ Scroll sideways for more columns";
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 6px 10px;
+    background: var(--panel-alt);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    left: 0;
+  }
+}
 
 @media (max-width: 640px) {
   .item-row { grid-template-columns: 1fr; gap: 6px; }
