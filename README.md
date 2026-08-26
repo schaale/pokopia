@@ -7,6 +7,9 @@ Live app: enable GitHub Pages for this repo (Settings → Pages → Source: GitH
 ## Features
 
 - **Matcher** — pick the Pokémon you want to house together and see which items appeal to them, tiered by how many Pokémon each item satisfies.
+- **Cohabitants** — pick the Pokémon already in (or planned for) a habitat and find the best roommates for it.
+  - *Find Companions* — ranks every other Pokémon by habitat compatibility and shared favorite tags, and spot-checks whether a shared 1 Decor + 1 Relaxation + 1 Toy combo gets everyone past the moving-in threshold.
+  - *Compare My Houses* — list your existing houses (one per line) and a Pokémon that needs a new home, and see which house is the best fit.
 - **Optimizer**
   - *Item Efficiency* — for every Pokémon, the best 1 Decor + 1 Relaxation + 1 Toy combo and whether it clears the moving-in threshold.
   - *Habitat Blueprints* — the 8 possible habitats (one pick from each of the Bright/Dark, Warm/Cool, and Humid/Dry axes), with the top items per slot ranked by total impact across every compatible Pokémon.
@@ -25,6 +28,7 @@ index.html            shell + tab navigation
 css/style.css          all styling
 js/data.js              fetches data/pokopia-data.json
 js/matcher.js            Favorites Matcher view
+js/cohabitants.js        Cohabitants view (Find Companions / Compare My Houses)
 js/optimizer.js          Item Efficiency / Habitat Blueprints / Group Efficiency views
 data/pokopia-data.json  categories, items, and Pokémon (with favorites + ideal habitat)
 ```
