@@ -1,8 +1,8 @@
 // Cohabitants: given the Pokémon already in (or planned for) a habitat, rank the rest of
 // the roster by how well they'd cohabitate — hard-filtered on habitat compatibility, ranked
-// by shared favorite tags, and spot-checked against a small (1 decor + 1 relaxation + 1 toy)
-// starter item set to see whether everyone involved would actually reach the moving-in
-// threshold (QP >= 4, same model as the Optimizer).
+// by shared favorite tags, and spot-checked against the best shared item set (1 decor +
+// 1 relaxation + 1 toy, plus free picks) to see whether everyone involved would actually
+// reach the moving-in threshold (QP >= 4, same model as the Optimizer).
 const Cohabitants = (() => {
   const HABITAT_OPPOSITE = { Bright: "Dark", Dark: "Bright", Warm: "Cool", Cool: "Warm", Humid: "Dry", Dry: "Humid" };
   const BADGE_ICON = { Bright: "💡", Dark: "🌑", Warm: "🌡️", Cool: "❄️", Humid: "💧", Dry: "🌵" };
@@ -10,6 +10,7 @@ const Cohabitants = (() => {
   const SAT_THRESHOLD = 4;
   const RESULT_LIMIT = 25;
   const PREFILTER = 60;
+  const MAX_ITEM_SET = 8;
 
   let data = null;
   let itemPool = null;
@@ -56,20 +57,32 @@ const Cohabitants = (() => {
     return best;
   }
 
-  // Best single 1 decor + 1 relaxation + 1 toy combo shared across `members`, greedily
-  // maximizing how many of them reach SAT_THRESHOLD. Mirrors Optimizer's bestItemSet at a
-  // fixed budget of 3 (the mandatory type-coverage phase, no free-pick phase needed).
-  function starterKit(members) {
+  // Best shared item set across `members`: 1 mandatory decor + 1 relaxation + 1 toy,
+  // then free picks up to MAX_ITEM_SET (or until everyone's satisfied, whichever first).
+  // Mirrors Optimizer's bestItemSet, capped smaller since this renders inline per row.
+  function bestSharedItemSet(members) {
     const state = members.map((p) => ({ p, qp: 0 }));
     const chosen = [];
     const used = new Set();
+
     for (const type of PLACEABLE_TYPES) {
+      if (chosen.length >= MAX_ITEM_SET) break;
       const pick = pickBestItem(state, used, type);
       if (!pick) continue;
       used.add(pick.item.id);
       chosen.push(pick.item);
       state.forEach((s) => (s.qp += qp(s.p, pick.item)));
     }
+
+    for (let step = chosen.length; step < MAX_ITEM_SET; step++) {
+      if (state.every((s) => s.qp >= SAT_THRESHOLD)) break;
+      const pick = pickBestItem(state, used, null);
+      if (!pick || pick.gain <= 0) break;
+      used.add(pick.item.id);
+      chosen.push(pick.item);
+      state.forEach((s) => (s.qp += qp(s.p, pick.item)));
+    }
+
     return { chosen, state };
   }
 
@@ -81,6 +94,12 @@ const Cohabitants = (() => {
       }
     }
     return pairs;
+  }
+
+  function openInMatcher(names) {
+    Matcher.setSelection(names);
+    const tab = document.querySelector('#page-tabs .page-tab[data-view="matcher"]');
+    if (tab) tab.click();
   }
 
   function habitatBadge(habitat) {
@@ -177,6 +196,13 @@ const Cohabitants = (() => {
     const statsEl = document.getElementById("coh-stats");
     const searchTerm = document.getElementById("coh-name-search").value.toLowerCase().trim();
 
+    const toggleBtn = document.getElementById("coh-toggle-conflicts");
+    toggleBtn.classList.toggle("act", showConflicts);
+    toggleBtn.textContent = showConflicts ? "Hide habitat conflicts" : "Show habitat conflicts too";
+
+    const openBtn = document.getElementById("coh-open-matcher");
+    openBtn.style.display = group.length ? "" : "none";
+
     if (!group.length) {
       results.innerHTML = '<div class="empty">Add a Pokémon above to see companion suggestions</div>';
       statsEl.textContent = "";
@@ -203,7 +229,7 @@ const Cohabitants = (() => {
 
     const forFeasibility = compatible.slice(0, PREFILTER);
     forFeasibility.forEach((entry) => {
-      const { chosen, state } = starterKit(group.concat([entry.poke]));
+      const { chosen, state } = bestSharedItemSet(group.concat([entry.poke]));
       entry.chosen = chosen;
       entry.feasible = state.every((s) => s.qp >= SAT_THRESHOLD);
       entry.satCount = state.filter((s) => s.qp >= SAT_THRESHOLD).length;
@@ -238,16 +264,19 @@ const Cohabitants = (() => {
       const feasBadge = e.feasible
         ? '<span class="feasible-yes">✓ all satisfied</span>'
         : `<span class="feasible-no">${e.satCount}/${group.length + 1} satisfied</span>`;
+      const names = group.map((m) => m.name).concat([e.poke.name]).join("|");
       return `<tr>
         <td style="font-weight:600;color:#e0e0e0">${esc(e.poke.name)}</td>
         <td>${habitatBadge(e.poke.habitat)}</td>
         <td><div>${pct}% avg overlap</div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">${memberBadges}</div></td>
         <td class="item-tags" style="justify-content:flex-start">${sharedTags}</td>
-        <td>${feasBadge}<div style="margin-top:4px">${kitHtml(e.chosen)}</div></td>
+        <td>${feasBadge}<div style="margin-top:4px">${kitHtml(e.chosen)}</div>
+          <button class="link-btn open-matcher-btn" data-names="${esc(names)}">🔍 Open in Matcher</button>
+        </td>
       </tr>`;
     }).join("");
     return `<div class="ie-table-wrap"><table class="ie-table"><thead><tr>
-      <th>Pokémon</th><th>Habitat</th><th>Compatibility</th><th>Shared favorites</th><th>Starter kit (3 items)</th>
+      <th>Pokémon</th><th>Habitat</th><th>Compatibility</th><th>Shared favorites</th><th>Suggested items (up to ${MAX_ITEM_SET})</th>
     </tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
@@ -320,7 +349,7 @@ const Cohabitants = (() => {
       let feasible = false;
       let satCount = 0;
       if (!conflictMembers.length) {
-        const r = starterKit(h.members.concat([targetPoke]));
+        const r = bestSharedItemSet(h.members.concat([targetPoke]));
         chosen = r.chosen;
         feasible = r.state.every((s) => s.qp >= SAT_THRESHOLD);
         satCount = r.state.filter((s) => s.qp >= SAT_THRESHOLD).length;
@@ -356,10 +385,12 @@ const Cohabitants = (() => {
       body += `<div class="hint" style="color:var(--bad)">⚠ ${esc(targetPoke.name)} (${targetPoke.habitat}) conflicts with ${h.conflictMembers.map((m) => esc(m.name)).join(", ")} — can't share a habitat here.</div>`;
     } else {
       const pct = Math.round(h.avg * 100);
+      const names = h.members.map((m) => m.name).concat([targetPoke.name]).join("|");
       body += `<div>${pct}% avg overlap with ${esc(targetPoke.name)} · ${h.feasible
-        ? '<span class="feasible-yes">✓ everyone reaches the moving-in threshold with 3 shared items</span>'
-        : `<span class="feasible-no">${h.satCount}/${h.members.length + 1} satisfied with 3 shared items</span>`}</div>
-        <div style="margin-top:6px">${kitHtml(h.chosen)}</div>`;
+        ? '<span class="feasible-yes">✓ everyone reaches the moving-in threshold with a shared item set</span>'
+        : `<span class="feasible-no">${h.satCount}/${h.members.length + 1} satisfied with a shared item set</span>`}</div>
+        <div style="margin-top:6px">${kitHtml(h.chosen)}</div>
+        <button class="link-btn open-matcher-btn" data-names="${esc(names)}" style="margin-top:6px">🔍 Open in Matcher</button>`;
     }
 
     const badge = (!h.empty && !h.conflictMembers.length && rank === 0) ? '<span class="sat-chip sat-full">🏆 Best fit</span>' : "";
@@ -395,9 +426,10 @@ const Cohabitants = (() => {
             </div>
             <div class="selected-pokemon" id="coh-selected"></div>
             <div id="coh-conflict-warning"></div>
+            <button class="link-btn" id="coh-open-matcher" style="margin-top:8px">🔍 Open this group in Matcher</button>
           </div>
 
-          <p class="hint">Habitat-compatible candidates are ranked by average overlap of favorite tags with everyone already selected, then spot-checked against the best shared 1 Decor + 1 Relaxation + 1 Toy combo (the moving-in threshold is ${SAT_THRESHOLD} QP, same model as the Optimizer). Feasibility is computed for the top ${PREFILTER} matches by overlap.</p>
+          <p class="hint">Habitat-compatible candidates are ranked by average overlap of favorite tags with everyone already selected, then spot-checked against the best shared item set (1 Decor + 1 Relaxation + 1 Toy, plus free picks up to ${MAX_ITEM_SET} items or until everyone clears the moving-in threshold of ${SAT_THRESHOLD} QP — same model as the Optimizer). Feasibility is computed for the top ${PREFILTER} matches by overlap.</p>
 
           <div class="mode-row">
             <button class="chip" id="coh-toggle-conflicts">Show habitat conflicts too</button>
@@ -452,11 +484,19 @@ const Cohabitants = (() => {
       renderFindResults();
     };
     document.getElementById("coh-name-search").addEventListener("input", renderFindResults);
-    document.getElementById("coh-toggle-conflicts").onclick = (e) => {
+    document.getElementById("coh-toggle-conflicts").onclick = () => {
       showConflicts = !showConflicts;
-      e.target.classList.toggle("act", showConflicts);
       renderFindResults();
     };
+    document.getElementById("coh-open-matcher").onclick = () => openInMatcher(group.map((p) => p.name));
+    document.getElementById("coh-results").addEventListener("click", (e) => {
+      const btn = e.target.closest(".open-matcher-btn");
+      if (btn) openInMatcher(btn.dataset.names.split("|"));
+    });
+    document.getElementById("compare-results").addEventListener("click", (e) => {
+      const btn = e.target.closest(".open-matcher-btn");
+      if (btn) openInMatcher(btn.dataset.names.split("|"));
+    });
 
     wirePicker({
       containerId: "target-search",

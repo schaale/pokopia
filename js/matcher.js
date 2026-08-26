@@ -156,6 +156,18 @@ const Matcher = (() => {
     render();
   }
 
+  // Replaces the current selection with the given Pokémon names (unknown names are
+  // ignored). Used by the Cohabitants tab's "Open in Matcher" buttons.
+  function setSelection(names) {
+    selected.length = 0;
+    names.forEach((name) => {
+      const poke = data.pokemon.find((p) => p.name === name);
+      if (poke && !selected.find((s) => s.name === poke.name)) selected.push({ name: poke.name, favorites: poke.favorites });
+    });
+    renderSelected();
+    render();
+  }
+
   function renderSelected() {
     const container = document.getElementById("selected-pokemon");
     const legend = document.getElementById("legend");
@@ -284,5 +296,5 @@ const Matcher = (() => {
     res.innerHTML = h;
   }
 
-  return { init };
+  return { init, setSelection };
 })();

@@ -123,6 +123,19 @@ textarea { width: 100%; resize: vertical; }
 }
 .clear-all:hover { border-color: var(--accent-2); color: var(--accent-2); }
 
+.link-btn {
+  font: inherit;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  text-decoration: underline;
+  display: inline-block;
+}
+.link-btn:hover { color: var(--accent-2); }
+
 .type-pill { padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; display: inline-block; white-space: nowrap; }
 .pill-decor { background: #2a3a1a; color: #a0c060; }
 .pill-relaxation { background: #1a2a3a; color: #60a0e0; }
