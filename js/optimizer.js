@@ -217,10 +217,10 @@ const Optimizer = (() => {
       </div>
     `;
 
-    document.querySelectorAll(".opt-tab").forEach((tab) => {
+    root.querySelectorAll(".opt-tab").forEach((tab) => {
       tab.onclick = () => {
-        document.querySelectorAll(".opt-tab").forEach((t) => t.classList.toggle("act", t === tab));
-        document.querySelectorAll(".opt-panel").forEach((p) => p.classList.remove("act"));
+        root.querySelectorAll(".opt-tab").forEach((t) => t.classList.toggle("act", t === tab));
+        root.querySelectorAll(".opt-panel").forEach((p) => p.classList.remove("act"));
         document.getElementById("opt-" + tab.dataset.tab).classList.add("act");
       };
     });

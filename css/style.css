@@ -98,7 +98,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 0 0 60px; }
 .chip.act { background: var(--accent); color: #1a1a2e; border-color: var(--accent); font-weight: 600; }
 .chip:hover:not(.act) { border-color: var(--accent); color: var(--text); }
 
-input[type="text"], select {
+input[type="text"], select, textarea {
   font: inherit;
   background: var(--bg);
   color: var(--text);
@@ -106,8 +106,9 @@ input[type="text"], select {
   border-radius: 8px;
   padding: 8px 12px;
 }
-input[type="text"]:focus, select:focus { outline: none; border-color: var(--accent); }
-input[type="text"]::placeholder { color: #555; }
+input[type="text"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+input[type="text"]::placeholder, textarea::placeholder { color: #555; }
+textarea { width: 100%; resize: vertical; }
 
 .clear-all {
   font: inherit;
