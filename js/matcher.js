@@ -283,7 +283,10 @@ const Matcher = (() => {
       : "";
 
     return `<div class="item-row">
-      <div class="item-name">${esc(s.item.name)} ${typePill}</div>
+      <div class="item-row-head">
+        <img class="item-thumb" src="data/images/${s.item.id}.png" alt="" loading="lazy" onerror="this.remove()">
+        <div class="item-name">${esc(s.item.name)} ${typePill}</div>
+      </div>
       <div class="item-row-footer">
         <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">🏷️ ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
         <div class="scores">${scoresHtml}</div>

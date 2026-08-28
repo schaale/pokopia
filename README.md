@@ -31,6 +31,7 @@ js/matcher.js            Favorites Matcher view
 js/cohabitants.js        Cohabitants view (Find Companions / Compare My Houses)
 js/optimizer.js          Item Efficiency / Habitat Blueprints / Group Efficiency views
 data/pokopia-data.json  categories, items, and Pokémon (with favorites + ideal habitat)
+data/images/<item id>.png  item thumbnails (only for items with a match — see below)
 ```
 
 ## Data provenance
@@ -38,6 +39,8 @@ data/pokopia-data.json  categories, items, and Pokémon (with favorites + ideal 
 `data/pokopia-data.json` was rebuilt from a full set of individually-saved Serebii "Favorites" pages — one per preference category (all 43), each listing every item and every Pokémon that has that category as a favorite. Current counts: 726 items, 365 Pokémon, 43 preference categories, a per-Pokémon ideal habitat, and (unused by the UI so far, but included) a per-Pokémon "specialty" job tag. Reflects the game's state as of **2026-08-09** (`data.meta.sourceDate`).
 
 A small number of items (19) and one Pokémon (Ditto) don't appear on any of the 43 category pages — either because they have zero favorite tags (Ditto) or because their tags are terrain/road pieces outside the 43 preference categories — so they're carried over unchanged from the prior snapshot rather than dropped. If you have a newer export, replace `data/pokopia-data.json` (keeping the same shape) and everything else keeps working unchanged.
+
+Item thumbnails (`data/images/`) are 64×64 PNGs sourced from Serebii's item icons, extracted from a saved Safari web archive of Serebii's items page (not scraped live — this environment can't reach serebii.net). Only 389 of 726 items are covered, since that's what the saved page happened to have loaded; the Matcher UI just omits the thumbnail for anything without a matching file (matched by item ID, `data/images/<id>.png`). To extend coverage, save a fresh web archive of Serebii's Pokopia items page(s) and re-run the same extraction (unzip → read the embedded image resources → match by normalized item name → resize to 64×64).
 
 ## Local development
 

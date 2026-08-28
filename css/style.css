@@ -196,6 +196,8 @@ textarea { width: 100%; resize: vertical; }
 .tier-items { background: var(--panel); border-radius: 0 8px 8px 8px; border: 1px solid var(--border); }
 .item-row { padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .item-row:last-child { border-bottom: none; }
+.item-row-head { display: flex; align-items: center; gap: 8px; }
+.item-thumb { width: 28px; height: 28px; object-fit: contain; background: var(--panel-alt); border-radius: 6px; flex-shrink: 0; }
 .item-name { font-weight: 600; font-size: 13px; }
 .item-row-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .item-tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
