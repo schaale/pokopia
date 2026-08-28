@@ -194,15 +194,23 @@ textarea { width: 100%; resize: vertical; }
 .tier-c { background: #555; color: #fff; }
 .cnt { font-size: 11px; color: #888; margin-left: 4px; font-weight: 400; }
 .tier-items { background: var(--panel); border-radius: 0 8px 8px 8px; border: 1px solid var(--border); }
-.item-row { display: grid; grid-template-columns: minmax(160px,1fr) 2fr auto; gap: 12px; padding: 10px 14px; align-items: center; border-bottom: 1px solid var(--border); }
+.item-row { padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .item-row:last-child { border-bottom: none; }
-.item-name { font-weight: 600; font-size: 14px; }
-.item-desc { font-size: 12px; color: #999; }
+.item-name { font-weight: 600; font-size: 13px; }
+.item-row-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .item-tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.collapsible-tags { display: none; justify-content: flex-start; margin-top: 6px; }
+.collapsible-tags.show { display: flex; }
 .tag { font-size: 10px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
 .tag-neutral { background: rgba(255,255,255,.05); color: #666; border: 1px solid #333; }
 .scores { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; white-space: nowrap; }
 .score-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+
+.matcher-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+.matcher-column { min-width: 0; }
+.matcher-column-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.matcher-column-title { font-weight: 700; font-size: 14px; color: var(--text); }
+.matcher-column-count { font-size: 11px; color: var(--text-dim); }
 
 /* ---------- Optimizer ---------- */
 .opt-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -280,7 +288,5 @@ textarea { width: 100%; resize: vertical; }
 }
 
 @media (max-width: 640px) {
-  .item-row { grid-template-columns: 1fr; gap: 6px; }
-  .item-tags, .scores { justify-content: flex-start; }
   .container { padding: 14px; }
 }
