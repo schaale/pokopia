@@ -1,5 +1,6 @@
-// Favorites Matcher: pick Pokémon, see which items appeal to them, grouped by coverage
-// and split into columns by item type (Decor / Relaxation / Toy / Other).
+// Favorites Matcher: pick Pokémon, see which items appeal to them, one horizontally
+// scrolling carousel per item type (Decor / Relaxation / Toy / Other) so the page stays
+// short regardless of how many items match.
 const Matcher = (() => {
   const COLORS = ["#e63946","#48cae4","#a855f7","#22c55e","#f97316","#ec4899","#14b8a6","#eab308",
     "#6366f1","#ef4444","#0ea5e9","#8b5cf6","#f43f5e","#06b6d4","#d946ef","#84cc16",
@@ -9,13 +10,12 @@ const Matcher = (() => {
   const AXIS_OF = { Bright: "light", Dark: "light", Warm: "temp", Cool: "temp", Humid: "moist", Dry: "moist" };
   const BADGE_ICON = { Bright: "💡", Dark: "🌑", Warm: "🌡️", Cool: "❄️", Humid: "💧", Dry: "🌵" };
 
-  const COLUMNS = [
+  const ROWS = [
     { type: "decor", icon: "🖼️", label: "Decor" },
     { type: "relaxation", icon: "🛋️", label: "Relaxation" },
     { type: "toy", icon: "🧸", label: "Toy" },
     { type: "other", icon: "📦", label: "Other" }, // road / none / other — still carry real preference tags
   ];
-  const TIER_PREVIEW = 6;
 
   let data = null;
   const selected = []; // [{name, favorites, habitat}]
@@ -140,19 +140,10 @@ const Matcher = (() => {
     });
 
     document.getElementById("results").addEventListener("click", (e) => {
-      const tierBtn = e.target.closest(".tier-toggle");
-      if (tierBtn) {
-        const target = document.getElementById(tierBtn.dataset.target);
-        const expand = target.style.display === "none";
-        target.style.display = expand ? "" : "none";
-        tierBtn.textContent = expand ? "Show less ←" : `Show ${tierBtn.dataset.remaining} more →`;
-        return;
-      }
       const tagBtn = e.target.closest(".tags-toggle");
       if (tagBtn) {
         const target = document.getElementById(tagBtn.dataset.target);
         target.classList.toggle("show");
-        return;
       }
     });
 
@@ -255,7 +246,7 @@ const Matcher = (() => {
     box.innerHTML = `<div class="hint" style="margin-bottom:12px">🏠 Habitat needed to satisfy everyone: ${required.map(habitatBadge).join(" ")}</div>`;
   }
 
-  function renderItemRow(s) {
+  function renderCard(s, total) {
     const tagCount = s.item.tags.length;
     let tagsHtml = "";
     s.item.tags.forEach((cat) => {
@@ -282,39 +273,22 @@ const Matcher = (() => {
       ? `<span class="type-pill pill-${s.item.type}">${s.item.type}</span>`
       : "";
 
-    return `<div class="item-row">
+    const allMatched = s.pokemonMatched === total;
+    const matchClass = allMatched ? "tier-s" : s.pokemonMatched > 1 ? "tier-b" : "tier-c";
+    const matchLabel = allMatched ? `✓ All ${total}` : `${s.pokemonMatched}/${total} pokémon`;
+
+    return `<div class="item-card">
       <div class="item-row-head">
         <img class="item-thumb" src="data/images/${s.item.id}.png" alt="" loading="lazy" onerror="this.remove()">
         <div class="item-name">${esc(s.item.name)} ${typePill}</div>
       </div>
+      <span class="card-match ${matchClass}">${matchLabel}</span>
       <div class="item-row-footer">
         <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">🏷️ ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
-        <div class="scores">${scoresHtml}</div>
       </div>
       <div class="item-tags collapsible-tags" id="tags-${s.item.id}">${tagsHtml}</div>
+      <div class="scores">${scoresHtml}</div>
     </div>`;
-  }
-
-  // One pokemonMatched-count group ("All N pokémon" / "N of M pokémon"), sorted by total
-  // hits then name — no further splitting by exact hit count or min-per-pokémon score.
-  function renderGroup(colType, list, total) {
-    const allMatched = list[0].pokemonMatched === total;
-    const label = allMatched ? `All ${total} pokémon` : `${list[0].pokemonMatched} of ${total} pokémon`;
-    const tierClass = allMatched ? "tier-s" : list[0].pokemonMatched > 1 ? "tier-b" : "tier-c";
-    const gid = `${colType}-${list[0].pokemonMatched}`;
-
-    let h = `<div class="tier"><div class="tier-label ${tierClass}">${label}<span class="cnt">(${list.length} items)</span></div><div class="tier-items">`;
-    const visible = list.slice(0, TIER_PREVIEW);
-    const hidden = list.slice(TIER_PREVIEW);
-    visible.forEach((s) => { h += renderItemRow(s); });
-    if (hidden.length) {
-      h += `<div class="tier-hidden" id="tier-hidden-${gid}" style="display:none">`;
-      hidden.forEach((s) => { h += renderItemRow(s); });
-      h += "</div>";
-      h += `<button class="link-btn tier-toggle" data-target="tier-hidden-${gid}" data-remaining="${hidden.length}" style="display:block;margin:8px 14px">Show ${hidden.length} more →</button>`;
-    }
-    h += "</div></div>";
-    return h;
   }
 
   function render() {
@@ -363,25 +337,17 @@ const Matcher = (() => {
 
     const sortFn = (a, b) => b.pokemonMatched - a.pokemonMatched || b.totalHits - a.totalHits || a.item.name.localeCompare(b.item.name);
 
-    let h = '<div class="matcher-columns">';
-    COLUMNS.forEach((col) => {
-      const items = scored.filter((s) => columnFor(s.item) === col.type).sort(sortFn);
-      h += `<div class="matcher-column"><div class="matcher-column-header"><span class="matcher-column-title">${col.icon} ${col.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
+    let h = "";
+    ROWS.forEach((row) => {
+      const items = scored.filter((s) => columnFor(s.item) === row.type).sort(sortFn);
+      h += `<div class="matcher-row"><div class="matcher-row-header"><span class="matcher-column-title">${row.icon} ${row.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
       if (!items.length) {
-        h += '<div class="empty" style="padding:20px 8px">No matches in this category</div>';
+        h += '<div class="empty" style="padding:16px 8px">No matches in this category</div>';
       } else {
-        let groupStart = 0;
-        while (groupStart < items.length) {
-          const matched = items[groupStart].pokemonMatched;
-          let groupEnd = groupStart + 1;
-          while (groupEnd < items.length && items[groupEnd].pokemonMatched === matched) groupEnd++;
-          h += renderGroup(col.type, items.slice(groupStart, groupEnd), selected.length);
-          groupStart = groupEnd;
-        }
+        h += '<div class="carousel">' + items.map((s) => renderCard(s, selected.length)).join("") + "</div>";
       }
       h += "</div>";
     });
-    h += "</div>";
 
     res.innerHTML = h;
   }
