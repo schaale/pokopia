@@ -19,6 +19,7 @@ const Matcher = (() => {
   let data = null;
   const selected = []; // [{name, favorites, habitat}]
   let mode = "shared"; // 'all' | 'shared' — default to "Appeals to all"
+  let mobileTypeFilter = "all"; // mobile-only: narrows the stacked list to one row type
   let highlightIdx = -1;
 
   function esc(s) {
@@ -143,6 +144,12 @@ const Matcher = (() => {
       if (tagBtn) {
         const target = document.getElementById(tagBtn.dataset.target);
         target.classList.toggle("show");
+        return;
+      }
+      const filterBtn = e.target.closest("[data-mobile-type]");
+      if (filterBtn) {
+        mobileTypeFilter = filterBtn.dataset.mobileType;
+        render();
       }
     });
 
@@ -336,19 +343,31 @@ const Matcher = (() => {
 
     const sortFn = (a, b) => b.pokemonMatched - a.pokemonMatched || b.totalHits - a.totalHits || a.item.name.localeCompare(b.item.name);
 
-    let h = "";
+    // Desktop: one horizontally-scrolling carousel per item type.
+    let desktopHtml = "";
     ROWS.forEach((row) => {
       const items = scored.filter((s) => columnFor(s.item) === row.type).sort(sortFn);
-      h += `<div class="matcher-row"><div class="matcher-row-header"><span class="matcher-column-title">${Icons.get(row.icon)} ${row.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
+      desktopHtml += `<div class="matcher-row"><div class="matcher-row-header"><span class="matcher-column-title">${Icons.get(row.icon)} ${row.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
       if (!items.length) {
-        h += '<div class="empty" style="padding:16px 8px">No matches in this category</div>';
+        desktopHtml += '<div class="empty" style="padding:16px 8px">No matches in this category</div>';
       } else {
-        h += '<div class="carousel">' + items.map((s) => renderCard(s, selected.length)).join("") + "</div>";
+        desktopHtml += '<div class="carousel">' + items.map((s) => renderCard(s, selected.length)).join("") + "</div>";
       }
-      h += "</div>";
+      desktopHtml += "</div>";
     });
 
-    res.innerHTML = h;
+    // Mobile: type filter chips narrow a single vertically-stacked list (no carousel).
+    const filterOptions = [{ type: "all", icon: null, label: "All" }, ...ROWS];
+    const filterChips = filterOptions.map((opt) =>
+      `<button class="chip${mobileTypeFilter === opt.type ? " act" : ""}" data-mobile-type="${opt.type}">${opt.icon ? Icons.get(opt.icon) + " " : ""}${opt.label}</button>`
+    ).join("");
+    const mobileItems = scored.filter((s) => mobileTypeFilter === "all" || columnFor(s.item) === mobileTypeFilter).sort(sortFn);
+    const mobileList = mobileItems.length
+      ? '<div class="stacked-list">' + mobileItems.map((s) => renderCard(s, selected.length)).join("") + "</div>"
+      : '<div class="empty">No matches in this category</div>';
+    const mobileHtml = `<div class="mode-row">${filterChips}</div>${mobileList}`;
+
+    res.innerHTML = `<div class="matcher-desktop">${desktopHtml}</div><div class="matcher-mobile">${mobileHtml}</div>`;
   }
 
   return { init, setSelection };
