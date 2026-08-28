@@ -5,7 +5,6 @@
 // reach the moving-in threshold (QP >= 4, same model as the Optimizer).
 const Cohabitants = (() => {
   const HABITAT_OPPOSITE = { Bright: "Dark", Dark: "Bright", Warm: "Cool", Cool: "Warm", Humid: "Dry", Dry: "Humid" };
-  const BADGE_ICON = { Bright: "💡", Dark: "🌑", Warm: "🌡️", Cool: "❄️", Humid: "💧", Dry: "🌵" };
   const PLACEABLE_TYPES = ["decor", "relaxation", "toy"];
   const SAT_THRESHOLD = 4;
   const RESULT_LIMIT = 25;
@@ -111,7 +110,7 @@ const Cohabitants = (() => {
   }
 
   function habitatBadge(habitat) {
-    return `<span class="env-badge badge-${habitat.toLowerCase()}">${BADGE_ICON[habitat]} ${habitat}</span>`;
+    return `<span class="env-badge badge-${habitat.toLowerCase()}">${Icons.habitat(habitat)} ${habitat}</span>`;
   }
 
   function kitHtml(chosen) {
@@ -138,12 +137,12 @@ const Cohabitants = (() => {
         .filter((p) => p.favorites.length && p.name.toLowerCase().includes(val) && !isTaken(p.name))
         .slice(0, 10);
       if (!matches.length) {
-        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:#666">No Pokémon found</div>';
+        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:var(--text-faint)">No Pokémon found</div>';
         dropdown.classList.add("show");
         return;
       }
       dropdown.innerHTML = matches.map((p) =>
-        `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:#888;font-size:11px">(${habitatIconFor(p)})</span></div>`
+        `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:var(--text-dim);font-size:11px">(${habitatIconFor(p)})</span></div>`
       ).join("");
       dropdown.classList.add("show");
       items().forEach((el) => {
@@ -169,7 +168,7 @@ const Cohabitants = (() => {
   }
 
   function habitatIconFor(p) {
-    return `${BADGE_ICON[p.habitat]} ${p.habitat}`;
+    return `${Icons.habitat(p.habitat)} ${p.habitat}`;
   }
 
   // ---------- Find companions mode ----------
@@ -191,7 +190,7 @@ const Cohabitants = (() => {
 
   function renderGroupChips() {
     const container = document.getElementById("coh-selected");
-    container.innerHTML = group.map((p) => `<div class="poke-tag" style="background:#f4a26120;border-color:var(--accent);color:var(--accent)">
+    container.innerHTML = group.map((p) => `<div class="poke-tag" style="background:var(--accent-tint);border-color:var(--accent);color:var(--accent)">
       ${esc(p.name)} <span class="fav-count">${habitatIconFor(p)}</span>
       <span class="remove" data-name="${esc(p.name)}">&times;</span></div>`).join("");
     container.querySelectorAll(".remove").forEach((el) => { el.onclick = () => removeFromGroup(el.dataset.name); });
@@ -199,7 +198,7 @@ const Cohabitants = (() => {
     const warn = document.getElementById("coh-conflict-warning");
     const pairs = findConflictPairs(group);
     warn.innerHTML = pairs.length
-      ? `<div class="hint" style="color:var(--bad);margin-top:8px">⚠ Habitat conflict in your selection: ${pairs.map((pr) => `${esc(pr[0].name)} (${pr[0].habitat}) vs ${esc(pr[1].name)} (${pr[1].habitat})`).join("; ")} — these can't share one habitat's environment settings.</div>`
+      ? `<div class="hint" style="color:var(--bad);margin-top:8px;display:flex;gap:6px;align-items:flex-start">${Icons.get("warning")}<span>Habitat conflict in your selection: ${pairs.map((pr) => `${esc(pr[0].name)} (${pr[0].habitat}) vs ${esc(pr[1].name)} (${pr[1].habitat})`).join("; ")} — these can't share one habitat's environment settings.</span></div>`
       : "";
   }
 
@@ -268,22 +267,22 @@ const Cohabitants = (() => {
     const rows = display.map((e) => {
       const pct = Math.round(e.avg * 100);
       const memberBadges = e.perMember.map((m) =>
-        `<span class="score-badge" style="background:#ffffff10;color:#ccc">${esc(m.name.substring(0, 10))}:${m.shared.length}</span>`
+        `<span class="score-badge" style="background:rgba(255,255,255,.08);color:var(--text-dim)">${esc(m.name.substring(0, 10))}:${m.shared.length}</span>`
       ).join(" ");
       const sharedTags = e.sharedUnion.length
-        ? e.sharedUnion.map((t) => `<span class="tag" style="background:#48cae420;color:#48cae4;border:1px solid #48cae450">${esc(t)}</span>`).join("")
-        : '<span style="color:#666">—</span>';
+        ? e.sharedUnion.map((t) => `<span class="tag" style="background:var(--info-tint);color:var(--info);border:1px solid rgba(10,132,255,.3)">${esc(t)}</span>`).join("")
+        : '<span style="color:var(--text-faint)">—</span>';
       const feasBadge = e.feasible
-        ? '<span class="feasible-yes">✓ all satisfied</span>'
+        ? `<span class="feasible-yes">${Icons.get("check")} all satisfied</span>`
         : `<span class="feasible-no">${e.satCount}/${group.length + 1} satisfied</span>`;
       const names = group.map((m) => m.name).concat([e.poke.name]).join("|");
       return `<tr>
-        <td style="font-weight:600;color:#e0e0e0">${esc(e.poke.name)}</td>
+        <td style="font-weight:600;color:var(--text)">${esc(e.poke.name)}</td>
         <td>${habitatBadge(e.poke.habitat)}</td>
         <td><div>${pct}% avg overlap</div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">${memberBadges}</div></td>
         <td class="item-tags" style="justify-content:flex-start">${sharedTags}</td>
         <td>${feasBadge}<div style="margin-top:4px">${kitHtml(e.chosen)}</div>
-          <button class="link-btn open-matcher-btn" data-names="${esc(names)}">🔍 Open in Matcher</button>
+          <button class="link-btn open-matcher-btn" data-names="${esc(names)}">${Icons.get("link")} Open in Matcher</button>
         </td>
       </tr>`;
     }).join("");
@@ -294,9 +293,9 @@ const Cohabitants = (() => {
 
   function renderConflictTable(conflicting) {
     const rows = conflicting.map((e) => `<tr>
-      <td style="font-weight:600;color:#e0e0e0">${esc(e.poke.name)}</td>
+      <td style="font-weight:600;color:var(--text)">${esc(e.poke.name)}</td>
       <td>${habitatBadge(e.poke.habitat)}</td>
-      <td style="color:var(--bad)">⚠ conflicts with ${e.conflictMembers.map((m) => esc(m.name)).join(", ")}</td>
+      <td style="color:var(--bad)">${Icons.get("warning")} conflicts with ${e.conflictMembers.map((m) => esc(m.name)).join(", ")}</td>
     </tr>`).join("");
     return `<div class="ie-table-wrap"><table class="ie-table"><thead><tr><th>Pokémon</th><th>Habitat</th><th>Conflict</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
@@ -320,7 +319,7 @@ const Cohabitants = (() => {
   function renderTargetChip() {
     const container = document.getElementById("target-selected");
     container.innerHTML = targetPoke
-      ? `<div class="poke-tag" style="background:#f4a26120;border-color:var(--accent);color:var(--accent)">
+      ? `<div class="poke-tag" style="background:var(--accent-tint);border-color:var(--accent);color:var(--accent)">
           ${esc(targetPoke.name)} <span class="fav-count">${habitatIconFor(targetPoke)}</span>
           <span class="remove" data-name="${esc(targetPoke.name)}">&times;</span></div>`
       : "";
@@ -389,23 +388,23 @@ const Cohabitants = (() => {
       : `House ${h.idx + 1} (no recognized Pokémon)`;
 
     let body = "";
-    if (h.unknown.length) body += `<div class="hint" style="color:var(--warn)">⚠ Not recognized: ${h.unknown.map(esc).join(", ")}</div>`;
+    if (h.unknown.length) body += `<div class="hint" style="color:var(--warn)">${Icons.get("warning")} Not recognized: ${h.unknown.map(esc).join(", ")}</div>`;
 
     if (h.empty) {
       body += '<div class="hint">Add at least one recognized Pokémon name to this line.</div>';
     } else if (h.conflictMembers.length) {
-      body += `<div class="hint" style="color:var(--bad)">⚠ ${esc(targetPoke.name)} (${targetPoke.habitat}) conflicts with ${h.conflictMembers.map((m) => esc(m.name)).join(", ")} — can't share a habitat here.</div>`;
+      body += `<div class="hint" style="color:var(--bad)">${Icons.get("warning")} ${esc(targetPoke.name)} (${targetPoke.habitat}) conflicts with ${h.conflictMembers.map((m) => esc(m.name)).join(", ")} — can't share a habitat here.</div>`;
     } else {
       const pct = Math.round(h.avg * 100);
       const names = h.members.map((m) => m.name).concat([targetPoke.name]).join("|");
       body += `<div>${pct}% avg overlap with ${esc(targetPoke.name)} · ${h.feasible
-        ? '<span class="feasible-yes">✓ everyone reaches the moving-in threshold with a shared item set</span>'
+        ? `<span class="feasible-yes">${Icons.get("check")} everyone reaches the moving-in threshold with a shared item set</span>`
         : `<span class="feasible-no">${h.satCount}/${h.members.length + 1} satisfied with a shared item set</span>`}</div>
         <div style="margin-top:6px">${kitHtml(h.chosen)}</div>
-        <button class="link-btn open-matcher-btn" data-names="${esc(names)}" style="margin-top:6px">🔍 Open in Matcher</button>`;
+        <button class="link-btn open-matcher-btn" data-names="${esc(names)}" style="margin-top:6px">${Icons.get("link")} Open in Matcher</button>`;
     }
 
-    const badge = (!h.empty && !h.conflictMembers.length && rank === 0) ? '<span class="sat-chip sat-full">🏆 Best fit</span>' : "";
+    const badge = (!h.empty && !h.conflictMembers.length && rank === 0) ? `<span class="sat-chip sat-full">${Icons.get("trophy")} Best fit</span>` : "";
 
     return `<div class="group-card"><div class="group-header" style="cursor:default">
         <span class="group-title">${title}</span>${badge}
@@ -422,8 +421,8 @@ const Cohabitants = (() => {
     root.innerHTML = `
       <div class="container">
         <div class="opt-tabs">
-          <button class="opt-tab act" data-cmode="find">🧭 Find Companions</button>
-          <button class="opt-tab" data-cmode="compare">🏠 Compare My Houses</button>
+          <button class="opt-tab act" data-cmode="find">${Icons.get("search")} Find Companions</button>
+          <button class="opt-tab" data-cmode="compare">${Icons.get("home")} Compare My Houses</button>
         </div>
 
         <div class="opt-panel act" id="coh-find">
@@ -431,7 +430,7 @@ const Cohabitants = (() => {
             <h2>Pokémon already living there <span class="sub">(or just the one you're moving — type to search, click to add)</span></h2>
             <div class="selected-pokemon" id="coh-selected"></div>
             <div id="coh-conflict-warning"></div>
-            <button class="link-btn" id="coh-open-matcher" style="margin-top:8px;margin-bottom:8px">🔍 Open this group in Matcher</button>
+            <button class="link-btn" id="coh-open-matcher" style="margin-top:8px;margin-bottom:8px">${Icons.get("link")} Open this group in Matcher</button>
             <div class="poke-input-row">
               <div class="poke-search" id="coh-search">
                 <input type="text" id="coh-input" placeholder="Type a Pokémon name…" autocomplete="off">

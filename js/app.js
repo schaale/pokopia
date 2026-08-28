@@ -1,3 +1,7 @@
+document.querySelectorAll("[data-icon]").forEach((el) => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+});
+
 document.querySelectorAll("#page-tabs .page-tab").forEach((tab) => {
   tab.onclick = () => {
     document.querySelectorAll("#page-tabs .page-tab").forEach((t) => t.classList.toggle("act", t === tab));

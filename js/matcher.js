@@ -8,13 +8,12 @@ const Matcher = (() => {
 
   const HABITAT_OPPOSITE = { Bright: "Dark", Dark: "Bright", Warm: "Cool", Cool: "Warm", Humid: "Dry", Dry: "Humid" };
   const AXIS_OF = { Bright: "light", Dark: "light", Warm: "temp", Cool: "temp", Humid: "moist", Dry: "moist" };
-  const BADGE_ICON = { Bright: "💡", Dark: "🌑", Warm: "🌡️", Cool: "❄️", Humid: "💧", Dry: "🌵" };
 
   const ROWS = [
-    { type: "decor", icon: "🖼️", label: "Decor" },
-    { type: "relaxation", icon: "🛋️", label: "Relaxation" },
-    { type: "toy", icon: "🧸", label: "Toy" },
-    { type: "other", icon: "📦", label: "Other" }, // road / none / other — still carry real preference tags
+    { type: "decor", icon: "decor", label: "Decor" },
+    { type: "relaxation", icon: "relaxation", label: "Relaxation" },
+    { type: "toy", icon: "toy", label: "Toy" },
+    { type: "other", icon: "box", label: "Other" }, // road / none / other — still carry real preference tags
   ];
 
   let data = null;
@@ -29,7 +28,7 @@ const Matcher = (() => {
   }
 
   function habitatBadge(habitat) {
-    return `<span class="env-badge badge-${habitat.toLowerCase()}" style="font-size:10px">${BADGE_ICON[habitat]} ${habitat}</span>`;
+    return `<span class="env-badge badge-${habitat.toLowerCase()}" style="font-size:10px">${Icons.habitat(habitat)} ${habitat}</span>`;
   }
 
   function columnFor(item) {
@@ -86,12 +85,12 @@ const Matcher = (() => {
         .filter((p) => p.name.toLowerCase().includes(val) && !selected.find((s) => s.name === p.name))
         .slice(0, 10);
       if (!matches.length) {
-        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:#666">No Pokémon found</div>';
+        dropdown.innerHTML = '<div class="dropdown-item" style="cursor:default;color:var(--text-faint)">No Pokémon found</div>';
         dropdown.classList.add("show");
         return;
       }
       dropdown.innerHTML = matches.map((p) =>
-        `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:#888;font-size:11px">(${p.favorites.length} favorites)</span></div>`
+        `<div class="dropdown-item" data-name="${esc(p.name)}">${esc(p.name)} <span style="color:var(--text-dim);font-size:11px">(${p.favorites.length} favorites)</span></div>`
       ).join("");
       dropdown.classList.add("show");
       dropdown.querySelectorAll(".dropdown-item").forEach((el) => {
@@ -236,14 +235,14 @@ const Matcher = (() => {
       const lines = conflictAxes.map((traits) =>
         Object.entries(traits).map(([trait, names]) => `${habitatBadge(trait)} (${names.map(esc).join(", ")})`).join(" vs ")
       );
-      box.innerHTML = `<div class="hint" style="color:var(--bad);background:#2a1a1a;border:1px solid #5a2a2a;border-radius:8px;padding:10px 12px;margin-bottom:12px">
-        ⚠ <strong>Habitat conflict</strong> — these Pokémon can't share one habitat's environment settings: ${lines.join("; ")}.
+      box.innerHTML = `<div class="hint" style="color:var(--bad);background:var(--bad-tint);border:1px solid rgba(255,69,58,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start">
+        ${Icons.get("warning")}<span><strong>Habitat conflict</strong> — these Pokémon can't share one habitat's environment settings: ${lines.join("; ")}.</span>
       </div>`;
       return;
     }
 
     const required = Object.values(perAxis).map((traits) => Object.keys(traits)[0]);
-    box.innerHTML = `<div class="hint" style="margin-bottom:12px">🏠 Habitat needed to satisfy everyone: ${required.map(habitatBadge).join(" ")}</div>`;
+    box.innerHTML = `<div class="hint" style="margin-bottom:12px;display:flex;gap:8px;align-items:center">${Icons.get("home")} Habitat needed to satisfy everyone: ${required.map(habitatBadge).join(" ")}</div>`;
   }
 
   function renderCard(s, total) {
@@ -275,7 +274,7 @@ const Matcher = (() => {
 
     const allMatched = s.pokemonMatched === total;
     const matchClass = allMatched ? "tier-s" : s.pokemonMatched > 1 ? "tier-b" : "tier-c";
-    const matchLabel = allMatched ? `✓ All ${total}` : `${s.pokemonMatched}/${total} pokémon`;
+    const matchLabel = allMatched ? `${Icons.get("check")} All ${total}` : `${s.pokemonMatched}/${total} pokémon`;
 
     return `<div class="item-card">
       <div class="item-row-head">
@@ -284,7 +283,7 @@ const Matcher = (() => {
       </div>
       <span class="card-match ${matchClass}">${matchLabel}</span>
       <div class="item-row-footer">
-        <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">🏷️ ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
+        <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">${Icons.get("tag")} ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
       </div>
       <div class="item-tags collapsible-tags" id="tags-${s.item.id}">${tagsHtml}</div>
       <div class="scores">${scoresHtml}</div>
@@ -340,7 +339,7 @@ const Matcher = (() => {
     let h = "";
     ROWS.forEach((row) => {
       const items = scored.filter((s) => columnFor(s.item) === row.type).sort(sortFn);
-      h += `<div class="matcher-row"><div class="matcher-row-header"><span class="matcher-column-title">${row.icon} ${row.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
+      h += `<div class="matcher-row"><div class="matcher-row-header"><span class="matcher-column-title">${Icons.get(row.icon)} ${row.label}</span><span class="matcher-column-count">${items.length} items</span></div>`;
       if (!items.length) {
         h += '<div class="empty" style="padding:16px 8px">No matches in this category</div>';
       } else {

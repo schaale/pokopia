@@ -8,7 +8,6 @@ const Optimizer = (() => {
     ["Warm", "Cool"],
     ["Humid", "Dry"],
   ];
-  const BADGE_ICON = { Bright: "💡", Dark: "🌑", Warm: "🌡️", Cool: "❄️", Humid: "💧", Dry: "🌵" };
   const SAT_THRESHOLD = 4;
   const PLACEABLE_TYPES = ["decor", "relaxation", "toy"];
 
@@ -193,7 +192,7 @@ const Optimizer = (() => {
   }
 
   function badges(poles) {
-    return poles.map((p) => `<span class="env-badge badge-${p.toLowerCase()}">${BADGE_ICON[p]} ${p}</span>`).join(" ");
+    return poles.map((p) => `<span class="env-badge badge-${p.toLowerCase()}">${Icons.habitat(p)} ${p}</span>`).join(" ");
   }
 
   // ---------- rendering ----------
@@ -207,9 +206,9 @@ const Optimizer = (() => {
     root.innerHTML = `
       <div class="container">
         <div class="opt-tabs">
-          <button class="opt-tab act" data-tab="eff">📦 Item Efficiency</button>
-          <button class="opt-tab" data-tab="bp">🗺️ Habitat Blueprints</button>
-          <button class="opt-tab" data-tab="grp">👥 Group Efficiency</button>
+          <button class="opt-tab act" data-tab="eff">${Icons.get("box")} Item Efficiency</button>
+          <button class="opt-tab" data-tab="bp">${Icons.get("grid")} Habitat Blueprints</button>
+          <button class="opt-tab" data-tab="grp">${Icons.get("people")} Group Efficiency</button>
         </div>
         <div class="opt-panel act" id="opt-eff"></div>
         <div class="opt-panel" id="opt-bp"></div>
@@ -254,16 +253,16 @@ const Optimizer = (() => {
     const maxBar = Math.max(...rows.map((r) => r.maxQP), 1);
 
     function listCell(entries) {
-      if (!entries.length) return '<span style="color:#666">—</span>';
+      if (!entries.length) return '<span style="color:var(--text-faint)">—</span>';
       return entries.map((e) => `<span>${escHtml(e.item.name)}</span> <span class="qp">(${e.q}QP)</span>`).join("<br>");
     }
 
     function rowsHtml(list) {
       return list.map((r) => `
         <tr class="ie-row" data-name="${escHtml(r.pokemon.name.toLowerCase())}">
-          <td style="font-weight:600;color:#e0e0e0">${escHtml(r.pokemon.name)}</td>
-          <td><span class="env-badge badge-${r.pokemon.habitat.toLowerCase()}" style="font-size:10px">${BADGE_ICON[r.pokemon.habitat]} ${r.pokemon.habitat}</span></td>
-          <td><div class="qp-bar-wrap"><span class="qp-num"><span class="${r.feasible ? "feasible-yes" : "feasible-no"}">${r.feasible ? "✓" : "✗"}</span> ${r.maxQP}</span><div class="qp-bar" style="width:${Math.round((r.maxQP / maxBar) * 80)}px"></div></div></td>
+          <td style="font-weight:600;color:var(--text)">${escHtml(r.pokemon.name)}</td>
+          <td><span class="env-badge badge-${r.pokemon.habitat.toLowerCase()}" style="font-size:10px">${Icons.habitat(r.pokemon.habitat)} ${r.pokemon.habitat}</span></td>
+          <td><div class="qp-bar-wrap"><span class="qp-num"><span class="${r.feasible ? "feasible-yes" : "feasible-no"}">${r.feasible ? Icons.get("check") : Icons.get("close")}</span> ${r.maxQP}</span><div class="qp-bar" style="width:${Math.round((r.maxQP / maxBar) * 80)}px"></div></div></td>
           <td class="items-list">${listCell(r.bestByType.decor)}</td>
           <td class="items-list">${listCell(r.bestByType.relaxation)}</td>
           <td class="items-list">${listCell(r.bestByType.toy)}</td>
@@ -299,7 +298,7 @@ const Optimizer = (() => {
         const label = t === "decor" ? "Decoration items" : t[0].toUpperCase() + t.slice(1) + " items";
         const rows = bp.perType[t].map((r) => `
           <div class="bp-item-row"><span class="bp-item-name">${escHtml(r.item.name)}</span><span class="bp-item-stat">${r.totalQP} total QP · ${r.helped} Pokémon</span></div>
-        `).join("") || '<div class="bp-item-row"><span style="color:#666">No data</span></div>';
+        `).join("") || '<div class="bp-item-row"><span style="color:var(--text-faint)">No data</span></div>';
         return `<div class="bp-section"><div class="bp-section-label">${label}</div>${rows}</div>`;
       }).join("");
 
@@ -320,7 +319,7 @@ const Optimizer = (() => {
     const panel = document.getElementById("opt-grp");
     panel.innerHTML = `
       <div class="info-box">
-        <div class="info-title">📐 How grouping works</div>
+        <div class="info-title">${Icons.get("grid")} How grouping works</div>
         <p>Pokémon that like similar things are clustered together so they can share one small item set. As a group grows, the item budget for its shared space shrinks (bigger shared area, fewer items fit): groups of ≤4 get 16 items, ≤9 get 9, ≤12 get 6, ≤16 get 4, and beyond that a floor of 3. Every zone always gets at least one Decor, one Relaxation, and one Toy item — the remaining budget (if any) goes to whatever maximizes how many Pokémon reach the moving-in threshold. Pick a habitat combination below to see the suggested groups and their item sets.</p>
       </div>
       <div class="blueprint-picker" id="bp-picker"></div>
@@ -329,7 +328,7 @@ const Optimizer = (() => {
 
     const picker = document.getElementById("bp-picker");
     picker.innerHTML = blueprints.map((bp, i) =>
-      `<button class="chip${i === 0 ? " act" : ""}" data-idx="${i}">${bp.poles.map((p) => BADGE_ICON[p]).join("")} ${bp.poles.join(" / ")}</button>`
+      `<button class="chip${i === 0 ? " act" : ""}" data-idx="${i}">${bp.poles.map((p) => Icons.habitat(p)).join("")} ${bp.poles.join(" / ")}</button>`
     ).join("");
 
     picker.querySelectorAll(".chip").forEach((chip) => {
@@ -384,18 +383,18 @@ const Optimizer = (() => {
         }).join("");
 
         const itemRows = g.chosen.map((it) => `<tr><td>${escHtml(it.name)}</td><td><span class="type-pill pill-${it.type}">${it.type}</span></td></tr>`).join("")
-          || '<tr><td colspan="2" style="color:#666">No items found</td></tr>';
+          || '<tr><td colspan="2" style="color:var(--text-faint)">No items found</td></tr>';
 
         return `<div class="group-card">
           <div class="group-header" data-gid="${gid}">
             <span class="group-title">Group ${i + 1}</span>
             <div class="group-meta">
               <span>${g.members.length} Pokémon</span>
-              <span class="sat-chip ${full ? "sat-full" : "sat-partial"}">${full ? "✓ All satisfied" : satCount + "/" + g.members.length + " satisfied"}</span>
+              <span class="sat-chip ${full ? "sat-full" : "sat-partial"}">${full ? Icons.get("check") + " All satisfied" : satCount + "/" + g.members.length + " satisfied"}</span>
               <span>${g.chosen.length}/${g.budget} items (spatial budget)</span>
-              ${tightCount ? `<span style="color:#f0c040">⚠ ${tightCount} tight (${SAT_THRESHOLD}QP)</span>` : ""}
+              ${tightCount ? `<span style="color:var(--warn)">${Icons.get("warning")} ${tightCount} tight (${SAT_THRESHOLD}QP)</span>` : ""}
             </div>
-            <span class="group-collapse-icon" id="gi-${gid}">▼</span>
+            <span class="group-collapse-icon" id="gi-${gid}">${Icons.get("chevron")}</span>
           </div>
           <div class="group-body" id="gb-${gid}">
             <div class="poke-grid">${chips}</div>
@@ -409,9 +408,8 @@ const Optimizer = (() => {
       results.querySelectorAll(".group-header").forEach((header) => {
         header.onclick = () => {
           const gid = header.dataset.gid;
-          document.getElementById("gb-" + gid).classList.toggle("open");
-          const icon = document.getElementById("gi-" + gid);
-          icon.textContent = document.getElementById("gb-" + gid).classList.contains("open") ? "▲" : "▼";
+          const open = document.getElementById("gb-" + gid).classList.toggle("open");
+          document.getElementById("gi-" + gid).classList.toggle("flip", open);
         };
       });
     }, 0);
