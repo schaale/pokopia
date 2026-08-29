@@ -288,17 +288,14 @@ textarea { width: 100%; resize: vertical; }
 .selected-pokemon { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 .selected-pokemon:not(:empty) { margin-bottom: var(--sp-3); }
 .poke-tag {
-  display: inline-flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px;
-  border-radius: var(--radius-pill); font-size: 13px; font-weight: 700; border: 1px solid; cursor: default;
-  transition: transform var(--dur) var(--ease);
+  display: flex; flex-direction: column; gap: 4px; padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm); font-size: 13px; cursor: default; max-width: 320px;
 }
-.poke-tag .remove { cursor: pointer; opacity: .6; font-size: 15px; line-height: 1; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+.poke-tag-head { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.poke-tag-favs { font-weight: 400; font-size: 11.5px; opacity: .85; }
+.poke-tag .remove { margin-left: auto; cursor: pointer; opacity: .6; font-size: 15px; line-height: 1; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease); }
 .poke-tag .remove:hover { opacity: 1; background: rgba(38, 49, 27, 0.1); }
 .poke-tag .fav-count { font-weight: 400; opacity: .75; font-size: 11px; }
-
-.legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-bottom: var(--sp-4); padding: var(--sp-3); background: var(--panel-alt); border-radius: var(--radius); border: 1px solid var(--border); font-size: 11.5px; color: var(--text-dim); }
-.legend-item { display: flex; align-items: center; gap: 5px; }
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
 .rh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--sp-3); flex-wrap: wrap; gap: var(--sp-2); }
 .rh h2 { font-size: 18px; font-weight: 800; }

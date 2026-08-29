@@ -57,8 +57,6 @@ const Matcher = (() => {
           </div>
         </div>
 
-        <div class="legend" id="legend" style="display:none"></div>
-
         <div id="matcher-controls" style="display:none">
           <input type="text" class="search-box" id="item-search" placeholder="Filter items by name…">
 
@@ -199,29 +197,26 @@ const Matcher = (() => {
 
   function renderSelected() {
     const container = document.getElementById("selected-pokemon");
-    const legend = document.getElementById("legend");
     document.getElementById("matcher-controls").style.display = selected.length ? "" : "none";
     if (!selected.length) {
       container.innerHTML = "";
-      legend.style.display = "none";
       document.getElementById("habitat-summary").innerHTML = "";
       return;
     }
-    container.innerHTML = selected.map((s, i) => {
-      const col = COLORS[i % COLORS.length];
-      return `<div class="poke-tag" style="background:${col}20;border-color:${col};color:${col}">
-        ${esc(s.name)} ${habitatBadge(s.habitat)} <span class="fav-count">(${s.favorites.length})</span>
-        <span class="remove" data-name="${esc(s.name)}">&times;</span></div>`;
-    }).join("");
+    // Colored by habitat trait (reusing the same badge-* colors used everywhere else),
+    // not per-Pokémon identity — that only mattered back when scores were colored to match.
+    container.innerHTML = selected.map((s) => `
+      <div class="poke-tag badge-${s.habitat.toLowerCase()}">
+        <div class="poke-tag-head">
+          <strong>${esc(s.name)}</strong> ${habitatBadge(s.habitat)} <span class="fav-count">(${s.favorites.length})</span>
+          <span class="remove" data-name="${esc(s.name)}">&times;</span>
+        </div>
+        <div class="poke-tag-favs">${esc(s.favorites.join(", "))}</div>
+      </div>`
+    ).join("");
     container.querySelectorAll(".remove").forEach((el) => {
       el.onclick = () => removePokemon(el.dataset.name);
     });
-
-    legend.style.display = "flex";
-    legend.innerHTML = selected.map((s, i) => {
-      const col = COLORS[i % COLORS.length];
-      return `<div class="legend-item"><span class="legend-dot" style="background:${col}"></span><strong style="color:${col}">${esc(s.name)}:</strong> ${esc(s.favorites.join(", "))}</div>`;
-    }).join("");
 
     renderHabitatSummary();
   }
