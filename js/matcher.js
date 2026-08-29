@@ -254,7 +254,7 @@ const Matcher = (() => {
     box.innerHTML = `<div class="hint" style="margin-bottom:12px;display:flex;gap:8px;align-items:center">${Icons.get("home")} Habitat needed to satisfy everyone: ${required.map(habitatBadge).join(" ")}</div>`;
   }
 
-  function renderCard(s, total) {
+  function renderCard(s) {
     const tagCount = s.item.tags.length;
     let tagsHtml = "";
     s.item.tags.forEach((cat) => {
@@ -271,31 +271,28 @@ const Matcher = (() => {
       }
     });
 
+    // Score pills are color-coded by hit count (not by which Pokémon), so at a glance
+    // red = doesn't appeal, amber = appeals a little, green = appeals a lot.
     const scoresHtml = selected.map((poke, pi) => {
-      const col = COLORS[pi % COLORS.length];
       const score = s.perPoke[pi].length;
-      return `<span class="score-badge" style="background:${col}20;color:${col}">${esc(poke.name.substring(0, 8))}:${score}</span>`;
+      const scoreClass = score === 0 ? "score-bad" : score === 1 ? "score-warn" : "score-good";
+      return `<span class="score-badge ${scoreClass}">${esc(poke.name.substring(0, 8))}</span>`;
     }).join("");
 
     const typePill = s.item.type && s.item.type !== "other" && s.item.type !== "none"
       ? `<span class="type-pill pill-${s.item.type}">${s.item.type}</span>`
       : "";
 
-    const allMatched = s.pokemonMatched === total;
-    const matchClass = allMatched ? "tier-s" : s.pokemonMatched > 1 ? "tier-b" : "tier-c";
-    const matchLabel = allMatched ? `${Icons.get("check")} All ${total}` : `${s.pokemonMatched}/${total} pokémon`;
-
     return `<div class="item-card">
       <div class="item-row-head">
         <img class="item-thumb" src="data/images/${s.item.id}.png" alt="" loading="lazy" onerror="this.remove()">
         <div class="item-name">${esc(s.item.name)} ${typePill}</div>
       </div>
-      <span class="card-match ${matchClass}">${matchLabel}</span>
       <div class="item-row-footer">
         <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">${Icons.get("tag")} ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
+        <div class="scores">${scoresHtml}</div>
       </div>
       <div class="item-tags collapsible-tags" id="tags-${s.item.id}">${tagsHtml}</div>
-      <div class="scores">${scoresHtml}</div>
     </div>`;
   }
 
@@ -353,7 +350,7 @@ const Matcher = (() => {
       if (!items.length) {
         desktopHtml += '<div class="empty" style="padding:16px 8px">No matches in this category</div>';
       } else {
-        desktopHtml += '<div class="carousel">' + items.map((s) => renderCard(s, selected.length)).join("") + "</div>";
+        desktopHtml += '<div class="carousel">' + items.map((s) => renderCard(s)).join("") + "</div>";
       }
       desktopHtml += "</div>";
     });
@@ -365,7 +362,7 @@ const Matcher = (() => {
     ).join("");
     const mobileItems = scored.filter((s) => mobileTypeFilter === "all" || columnFor(s.item) === mobileTypeFilter).sort(sortFn);
     const mobileList = mobileItems.length
-      ? '<div class="stacked-list">' + mobileItems.map((s) => renderCard(s, selected.length)).join("") + "</div>"
+      ? '<div class="stacked-list">' + mobileItems.map((s) => renderCard(s)).join("") + "</div>"
       : '<div class="empty">No matches in this category</div>';
     const mobileHtml = `<div class="mode-row type-filter-row">${filterChips}</div>${mobileList}`;
 
