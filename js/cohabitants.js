@@ -267,7 +267,7 @@ const Cohabitants = (() => {
     const rows = display.map((e) => {
       const pct = Math.round(e.avg * 100);
       const memberBadges = e.perMember.map((m) =>
-        `<span class="score-badge" style="background:rgba(255,255,255,.08);color:var(--text-dim)">${esc(m.name.substring(0, 10))}:${m.shared.length}</span>`
+        `<span class="score-badge" style="background:rgba(38,49,27,.07);color:var(--text-dim)">${esc(m.name.substring(0, 10))}:${m.shared.length}</span>`
       ).join(" ");
       const sharedTags = e.sharedUnion.length
         ? e.sharedUnion.map((t) => `<span class="tag" style="background:var(--info-tint);color:var(--info);border:1px solid rgba(10,132,255,.3)">${esc(t)}</span>`).join("")

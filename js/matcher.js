@@ -2,9 +2,11 @@
 // scrolling carousel per item type (Decor / Relaxation / Toy / Other) so the page stays
 // short regardless of how many items match.
 const Matcher = (() => {
-  const COLORS = ["#e63946","#48cae4","#a855f7","#22c55e","#f97316","#ec4899","#14b8a6","#eab308",
-    "#6366f1","#ef4444","#0ea5e9","#8b5cf6","#f43f5e","#06b6d4","#d946ef","#84cc16",
-    "#fb923c","#f472b6","#2dd4bf","#fbbf24","#818cf8","#fb7185","#38bdf8","#c084fc"];
+  // Per-Pokémon categorical colors, darkened from their original vivid hues so each
+  // still passes WCAG AA (>=4.5:1) as text on the app's light cream background.
+  const COLORS = ["#d53541","#2c7d8d","#974cde","#17853f","#ba5610","#c83d82","#0e8275","#916e04",
+    "#6062e9","#d23b3b","#0a7bae","#8256e7","#d43651","#047f94","#b63ac8","#53800d",
+    "#a86128","#b25384","#1b8174","#916e14","#636bbe","#b75261","#247aa1","#8a5fb5"];
 
   const HABITAT_OPPOSITE = { Bright: "Dark", Dark: "Bright", Warm: "Cool", Cool: "Warm", Humid: "Dry", Dry: "Humid" };
   const AXIS_OF = { Bright: "light", Dark: "light", Warm: "temp", Cool: "temp", Humid: "moist", Dry: "moist" };
@@ -264,8 +266,8 @@ const Matcher = (() => {
         tagsHtml += `<span class="tag" style="background:${col}20;color:${col};border:1px solid ${col}50">${esc(cat)}</span>`;
       } else {
         const cols = pokeIndices.map((i) => COLORS[i % COLORS.length]);
-        const grad = cols.map((c, i) => `${c}30 ${(i * 100) / (cols.length - 1)}%`).join(",");
-        tagsHtml += `<span class="tag" style="background:linear-gradient(135deg,${grad});color:#fff;border:1px solid #a855f780">${esc(cat)} (${pokeIndices.length})</span>`;
+        const grad = cols.map((c, i) => `${c}45 ${(i * 100) / (cols.length - 1)}%`).join(",");
+        tagsHtml += `<span class="tag" style="background:linear-gradient(135deg,${grad});color:var(--text);border:1px solid var(--border-strong)">${esc(cat)} (${pokeIndices.length})</span>`;
       }
     });
 
