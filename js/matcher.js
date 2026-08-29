@@ -359,7 +359,7 @@ const Matcher = (() => {
     });
 
     // Mobile: type filter chips narrow a single vertically-stacked list (no carousel).
-    const filterOptions = [{ type: "all", icon: null, label: "All" }, ...ROWS];
+    const filterOptions = [{ type: "all", icon: null, label: "All" }, ...ROWS.filter((r) => r.type !== "other")];
     const filterChips = filterOptions.map((opt) =>
       `<button class="chip${mobileTypeFilter === opt.type ? " act" : ""}" data-mobile-type="${opt.type}">${opt.icon ? Icons.get(opt.icon) + " " : ""}${opt.label}</button>`
     ).join("");
@@ -367,7 +367,7 @@ const Matcher = (() => {
     const mobileList = mobileItems.length
       ? '<div class="stacked-list">' + mobileItems.map((s) => renderCard(s, selected.length)).join("") + "</div>"
       : '<div class="empty">No matches in this category</div>';
-    const mobileHtml = `<div class="mode-row">${filterChips}</div>${mobileList}`;
+    const mobileHtml = `<div class="mode-row type-filter-row">${filterChips}</div>${mobileList}`;
 
     res.innerHTML = `<div class="matcher-desktop">${desktopHtml}</div><div class="matcher-mobile">${mobileHtml}</div>`;
   }
