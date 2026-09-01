@@ -426,3 +426,16 @@ textarea { width: 100%; resize: vertical; }
   .container { padding: var(--sp-4); }
   .site-header { padding: var(--sp-5) var(--sp-3) var(--sp-4); }
 }
+
+.recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--sp-2); }
+.recipe-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.recipe-row:hover { border-color: var(--border-strong); }
+.recipe-row.recipe-known { background: var(--good-tint); border-color: rgba(49, 111, 94, 0.35); }
+.recipe-row .recipe-check { flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--good); cursor: pointer; }
+.recipe-row .recipe-name { font-size: 13px; }
+.recipe-row.recipe-known .recipe-name { color: var(--good); font-weight: 700; }
+#recipes-import-text { width: 100%; resize: vertical; }

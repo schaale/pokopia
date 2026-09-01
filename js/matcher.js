@@ -21,6 +21,7 @@ const Matcher = (() => {
   let data = null;
   const selected = []; // [{name, favorites, habitat}]
   let mode = "shared"; // 'all' | 'shared' — default to "Appeals to all"
+  let craftableOnly = false; // when true, limit results to items whose recipe is marked known in Recipes
   let mobileTypeFilter = "all"; // mobile-only: narrows the stacked list to one row type
   let highlightIdx = -1;
 
@@ -64,6 +65,11 @@ const Matcher = (() => {
             <span class="lbl">Show:</span>
             <button class="chip" data-m="all">All matches</button>
             <button class="chip act" data-m="shared">Appeals to all</button>
+          </div>
+
+          <div class="mode-row">
+            <span class="lbl">Storage cleanup:</span>
+            <button class="chip" id="craftable-only-toggle" title="Only show items whose recipe you've marked known on the Recipes tab — a hoarding hint: if you can craft it again, you don't need to keep a spare.">${Icons.get("box")} Craftable only <span id="craftable-count"></span></button>
           </div>
         </div>
 
@@ -138,6 +144,12 @@ const Matcher = (() => {
         render();
       };
     });
+
+    document.getElementById("craftable-only-toggle").onclick = (e) => {
+      craftableOnly = !craftableOnly;
+      e.currentTarget.classList.toggle("act", craftableOnly);
+      render();
+    };
 
     document.getElementById("results").addEventListener("click", (e) => {
       const tagBtn = e.target.closest(".tags-toggle");
@@ -301,9 +313,14 @@ const Matcher = (() => {
       return;
     }
 
+    const knownCount = Recipes.knownCount();
+    const countEl = document.getElementById("craftable-count");
+    if (countEl) countEl.textContent = knownCount ? `(${knownCount})` : "";
+
     const scored = [];
     data.items.forEach((item) => {
       if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
+      if (craftableOnly && !Recipes.isKnown(item.id)) return;
 
       const perPoke = [];
       let totalHits = 0;

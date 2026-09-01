@@ -11,6 +11,7 @@ document.querySelectorAll("#page-tabs .page-tab").forEach((tab) => {
 });
 
 PokopiaData.then((data) => {
+  Recipes.init(data);
   Matcher.init(data);
   Cohabitants.init(data);
   Optimizer.init(data);
