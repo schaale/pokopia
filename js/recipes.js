@@ -7,6 +7,22 @@
 const Recipes = (() => {
   const STORAGE_KEY = "pokopia.knownRecipes";
 
+  // Recipes confirmed known (via crafting-menu screenshots cross-referenced against item
+  // icons) as of this build. Baked in so a fresh browser/device starts already caught up
+  // instead of everything reverting to "unknown" — the actual persistence fix, since
+  // localStorage alone is per-browser. Extend this list (via the bulk-import box, then
+  // copying its matched ids in) as more recipes get confirmed.
+  const DEFAULT_KNOWN_IDS = [
+    5, 24, 26, 32, 41, 55, 71, 72, 76, 79, 84, 92, 112, 113, 116, 134, 139, 146, 151, 161,
+    184, 185, 186, 187, 188, 189, 193, 203, 214, 215, 219, 229, 243, 247, 261, 267, 270,
+    272, 273, 277, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 296, 298,
+    324, 325, 326, 338, 339, 351, 361, 366, 376, 378, 379, 411, 412, 413, 414, 415, 416,
+    417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 437, 443, 447, 450, 451,
+    452, 453, 454, 455, 456, 458, 478, 493, 494, 496, 518, 519, 521, 535, 543, 544, 560,
+    567, 568, 581, 590, 596, 598, 599, 604, 616, 618, 620, 621, 622, 624, 652, 656, 671,
+    677, 682, 686, 688, 690, 714, 715, 716, 717, 718, 721, 722,
+  ];
+
   let data = null;
   let known = new Set();
   let searchTerm = "";
@@ -25,6 +41,8 @@ const Recipes = (() => {
     } catch {
       known = new Set();
     }
+    DEFAULT_KNOWN_IDS.forEach((id) => known.add(id));
+    save();
   }
 
   function save() {
@@ -59,8 +77,9 @@ const Recipes = (() => {
           <p style="font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-top:-4px">
             Check off items whose recipe you currently own — i.e. it shows a real thumbnail (not a "?") in your
             in-game crafting menu. Anything checked here can be filtered to in the Matcher, so you know it's safe
-            to clear out of storage: you can always craft another. This list lives only in this browser
-            (<span id="recipes-count"></span>).
+            to clear out of storage: you can always craft another. A baseline of confirmed recipes ships with the
+            app itself, so it's the same on every device; anything you check beyond that is saved to this browser
+            only (<span id="recipes-count"></span>).
           </p>
           <div class="poke-input-row" style="margin-top:var(--sp-3)">
             <input type="text" class="search-box" id="recipes-search" placeholder="Filter items by name…" style="flex:1">
