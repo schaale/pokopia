@@ -106,6 +106,15 @@ const Recipes = (() => {
             </div>
             <div id="recipes-import-result" style="font-size:12px;color:var(--text-dim);margin-top:6px"></div>
           </details>
+          <details id="recipes-export-details" style="margin-top:var(--sp-2)">
+            <summary style="cursor:pointer;font-size:12.5px;color:var(--text-dim);font-weight:700">Export items checked since the last update <span id="recipes-export-count"></span></summary>
+            <p style="font-size:12px;color:var(--text-dim);margin-top:8px">Paste this back to report which recipes you've unlocked since the built-in baseline was last refreshed.</p>
+            <div style="display:flex;gap:8px;margin-top:6px;align-items:flex-start">
+              <textarea id="recipes-export-text" rows="4" style="flex:1" readonly></textarea>
+              <button class="chip" id="recipes-export-copy-btn" style="white-space:nowrap">Copy</button>
+            </div>
+            <div id="recipes-export-result" style="font-size:12px;color:var(--text-dim);margin-top:6px"></div>
+          </details>
         </div>
 
         <div class="rh">
@@ -157,16 +166,57 @@ const Recipes = (() => {
       render();
     });
 
+    document.getElementById("recipes-export-copy-btn").addEventListener("click", async () => {
+      const text = document.getElementById("recipes-export-text").value;
+      const resultEl = document.getElementById("recipes-export-result");
+      if (!text) { resultEl.textContent = "Nothing to copy — no new recipes checked since the baseline."; return; }
+      try {
+        await navigator.clipboard.writeText(text);
+        resultEl.textContent = "Copied to clipboard.";
+      } catch {
+        resultEl.textContent = "Couldn't access the clipboard — select the text above and copy it manually.";
+      }
+    });
+
     document.getElementById("recipes-list").addEventListener("change", (e) => {
       const row = e.target.closest("[data-item-id]");
       if (!row || !e.target.classList.contains("recipe-check")) return;
       const id = Number(row.dataset.itemId);
-      setKnown(id, e.target.checked);
-      row.classList.toggle("recipe-known", e.target.checked);
+      const nowKnown = e.target.checked;
+      setKnown(id, nowKnown);
       updateStats();
+      updateExportBox();
+      // "Hide checked" is active and this item just became checked — it should drop out
+      // of view rather than sit there contradicting the filter.
+      if (onlyUnmarked && nowKnown) {
+        row.remove();
+        if (!document.querySelector("#recipes-list .recipe-row")) render();
+        return;
+      }
+      row.classList.toggle("recipe-known", nowKnown);
+      const item = craftable.find((it) => it.id === id);
+      const nameEl = row.querySelector(".recipe-name");
+      nameEl.textContent = nowKnown ? item.name : "?";
+      nameEl.classList.toggle("recipe-name-hidden", !nowKnown);
+      row.querySelector(".recipe-thumb").innerHTML = thumbHtml(item, nowKnown);
     });
 
     render();
+  }
+
+  // Items checked beyond the baked-in DEFAULT_KNOWN_IDS baseline — i.e. recipes you've
+  // confirmed since the app was last updated with your screenshots.
+  function newlySinceBaseline() {
+    const baseline = new Set(DEFAULT_KNOWN_IDS);
+    return craftable
+      .filter((it) => known.has(it.id) && !baseline.has(it.id))
+      .sort((a, b) => a.order - b.order);
+  }
+
+  function updateExportBox() {
+    const items = newlySinceBaseline();
+    document.getElementById("recipes-export-count").textContent = items.length ? `(${items.length})` : "";
+    document.getElementById("recipes-export-text").value = items.map((it) => it.name).join(", ");
   }
 
   function updateStats() {
@@ -174,8 +224,18 @@ const Recipes = (() => {
     document.getElementById("recipes-stats").textContent = `${known.size} known`;
   }
 
+  // Unchecked = a recipe you haven't confirmed yet — don't even request the real thumbnail,
+  // so scrolling the full list can't spoil an item you haven't unlocked in-game. The
+  // placeholder mirrors the crafting menu's own locked "?" tiles.
+  function thumbHtml(it, known) {
+    return known
+      ? `<img class="item-thumb" src="data/images/${it.id}.png" alt="" loading="lazy" onerror="this.remove()">`
+      : `<span class="item-thumb recipe-thumb-placeholder">?</span>`;
+  }
+
   function render() {
     updateStats();
+    updateExportBox();
     const list = document.getElementById("recipes-list");
     let items = craftable;
     if (searchTerm) items = items.filter((it) => it.name.toLowerCase().includes(searchTerm));
@@ -189,13 +249,17 @@ const Recipes = (() => {
       return;
     }
 
-    list.innerHTML = `<div class="recipe-grid">` + items.map((it) => `
-      <label class="recipe-row${isKnown(it.id) ? " recipe-known" : ""}" data-item-id="${it.id}">
-        <input type="checkbox" class="recipe-check" ${isKnown(it.id) ? "checked" : ""}>
-        <img class="item-thumb" src="data/images/${it.id}.png" alt="" loading="lazy" onerror="this.remove()">
-        <span class="recipe-name">${esc(it.name)}</span>
+    list.innerHTML = `<div class="recipe-grid">` + items.map((it) => {
+      const known = isKnown(it.id);
+      const name = known ? esc(it.name) : "?";
+      return `
+      <label class="recipe-row${known ? " recipe-known" : ""}" data-item-id="${it.id}">
+        <input type="checkbox" class="recipe-check" ${known ? "checked" : ""}>
+        <span class="recipe-thumb">${thumbHtml(it, known)}</span>
+        <span class="recipe-name${known ? "" : " recipe-name-hidden"}">${name}</span>
       </label>
-    `).join("") + `</div>`;
+    `;
+    }).join("") + `</div>`;
   }
 
   return { init, isKnown, knownCount };
