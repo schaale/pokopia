@@ -18,14 +18,27 @@ const Recipes = (() => {
   // localStorage alone is per-browser. Extend this list (via the bulk-import box, then
   // copying its matched ids in) as more recipes get confirmed.
   const DEFAULT_KNOWN_IDS = [
-    5, 24, 26, 32, 41, 55, 71, 72, 76, 79, 84, 92, 112, 113, 116, 134, 139, 146, 151, 161,
-    184, 185, 186, 187, 188, 189, 193, 203, 214, 215, 219, 229, 243, 247, 261, 267, 270,
-    272, 273, 277, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 296, 298,
-    324, 325, 326, 338, 339, 351, 361, 366, 376, 378, 379, 411, 412, 413, 414, 415, 416,
-    417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 437, 443, 447, 450, 451,
-    452, 453, 454, 455, 456, 458, 478, 493, 494, 496, 518, 519, 521, 535, 543, 544, 560,
-    567, 568, 581, 590, 596, 598, 599, 604, 616, 618, 620, 621, 622, 624, 652, 656, 671,
-    677, 682, 686, 688, 690, 714, 715, 716, 717, 718, 721, 722,
+    5, 24, 26, 32, 41, 55, 71, 72, 76, 79, 84, 87, 88, 92,
+    94, 107, 112, 113, 116, 119, 134, 139, 146, 151, 161, 176, 184, 185,
+    186, 187, 188, 189, 193, 203, 214, 215, 219, 229, 243, 247, 261, 267,
+    269, 270, 272, 273, 275, 277, 279, 282, 283, 284, 285, 286, 287, 288,
+    289, 290, 291, 292, 293, 296, 297, 298, 324, 325, 326, 338, 339, 348,
+    351, 352, 361, 366, 367, 376, 378, 379, 382, 398, 399, 400, 411, 412,
+    413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+    427, 428, 437, 443, 447, 450, 451, 452, 453, 454, 455, 456, 458, 478,
+    489, 492, 493, 494, 495, 496, 510, 518, 519, 521, 535, 543, 544, 560,
+    566, 567, 568, 579, 581, 590, 596, 598, 599, 602, 604, 607, 611, 612,
+    614, 616, 618, 620, 621, 622, 624, 627, 647, 652, 655, 656, 667, 671,
+    677, 682, 686, 688, 690, 714, 715, 716, 717, 718, 721, 722, 731, 736,
+    739, 742, 743, 745, 746, 747, 748, 750, 751, 752, 753, 755, 757, 758,
+    759, 760, 761, 766, 767, 768, 769, 770, 772, 777, 780, 781, 783, 785,
+    786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799,
+    800, 805, 806, 808, 809, 810, 813, 817, 818, 820, 821, 822, 823, 824,
+    827, 828, 829, 833, 834, 835, 838, 839, 840, 844, 846, 847, 848, 850,
+    851, 852, 857, 858, 859, 860, 861, 864, 873, 883, 884, 885, 886, 887,
+    888, 899, 900, 902, 906, 910, 911, 913, 914, 915, 916, 918, 920, 924,
+    926, 928, 929, 930, 931, 932, 935, 939, 940, 944, 952, 958, 959, 973,
+    1007, 1019, 1023, 1029, 1050, 1058, 1059, 1061, 1062, 1070, 1073,
   ];
 
   let craftable = [];
@@ -81,12 +94,12 @@ const Recipes = (() => {
         <div class="card">
           <h2>Craftable recipes <span class="sub">(what you've unlocked, not what exists)</span></h2>
           <p style="font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-top:-4px">
-            Check off items whose recipe you currently own — i.e. it shows a real thumbnail (not a "?") in your
-            in-game crafting menu. Anything checked here can be filtered to in the Matcher, so you know it's safe
-            to clear out of storage: you can always craft another. A baseline of confirmed recipes ships with the
-            app itself, so it's the same on every device; anything you check beyond that is saved to this browser
-            only (<span id="recipes-count"></span>). "Default" order matches the crafting menu's own tab-by-tab,
-            row-by-row layout, so you can scan it side by side with the game.
+            Click an item whose recipe you currently own — i.e. it shows a real thumbnail (not a "?") in your
+            in-game crafting menu — to mark it green. Anything green can be filtered to in the Matcher, so you know
+            it's safe to clear out of storage: you can always craft another. A baseline of confirmed recipes ships
+            with the app itself, so it's the same on every device; anything you mark beyond that is saved to this
+            browser only (<span id="recipes-count"></span>). "Default" order matches the crafting menu's own
+            tab-by-tab, row-by-row layout, so you can scan it side by side with the game.
           </p>
           <div class="poke-input-row" style="margin-top:var(--sp-3)">
             <input type="text" class="search-box" id="recipes-search" placeholder="Filter items by name…" style="flex:1">
@@ -178,11 +191,17 @@ const Recipes = (() => {
       }
     });
 
-    document.getElementById("recipes-list").addEventListener("change", (e) => {
+    document.getElementById("recipes-list").addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      if (!e.target.closest("[data-item-id]")) return;
+      e.preventDefault();
+      e.target.click();
+    });
+    document.getElementById("recipes-list").addEventListener("click", (e) => {
       const row = e.target.closest("[data-item-id]");
-      if (!row || !e.target.classList.contains("recipe-check")) return;
+      if (!row) return;
       const id = Number(row.dataset.itemId);
-      const nowKnown = e.target.checked;
+      const nowKnown = !isKnown(id);
       setKnown(id, nowKnown);
       updateStats();
       updateExportBox();
@@ -253,11 +272,10 @@ const Recipes = (() => {
       const known = isKnown(it.id);
       const name = known ? esc(it.name) : "?";
       return `
-      <label class="recipe-row${known ? " recipe-known" : ""}" data-item-id="${it.id}">
-        <input type="checkbox" class="recipe-check" ${known ? "checked" : ""}>
+      <div class="recipe-row${known ? " recipe-known" : ""}" data-item-id="${it.id}" role="button" tabindex="0">
         <span class="recipe-thumb">${thumbHtml(it, known)}</span>
         <span class="recipe-name${known ? "" : " recipe-name-hidden"}">${name}</span>
-      </label>
+      </div>
     `;
     }).join("") + `</div>`;
   }
