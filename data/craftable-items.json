@@ -2079,43 +2079,43 @@
   "id": 275,
   "name": "Iron door",
   "category": "Buildings",
-  "order": 346
+  "order": 348
  },
  {
   "id": 777,
   "name": "Large wooden door",
   "category": "Buildings",
-  "order": 347
+  "order": 346
  },
  {
   "id": 778,
   "name": "Automatic doors",
   "category": "Buildings",
-  "order": 348
+  "order": 347
  },
  {
   "id": 779,
   "name": "Shutter",
   "category": "Buildings",
-  "order": 349
+  "order": 352
  },
  {
   "id": 780,
   "name": "Wooden gate",
   "category": "Buildings",
-  "order": 350
+  "order": 349
  },
  {
   "id": 781,
   "name": "Swinging doors",
   "category": "Buildings",
-  "order": 351
+  "order": 350
  },
  {
   "id": 277,
   "name": "Iron gate",
   "category": "Buildings",
-  "order": 352
+  "order": 351
  },
  {
   "id": 782,
@@ -2127,13 +2127,13 @@
   "id": 783,
   "name": "Hatch window",
   "category": "Buildings",
-  "order": 354
+  "order": 355
  },
  {
   "id": 784,
   "name": "Simple curtain (right)",
   "category": "Buildings",
-  "order": 355
+  "order": 354
  },
  {
   "id": 785,
@@ -2251,7 +2251,7 @@
  },
  {
   "id": 795,
-  "name": "Pitched brick roof",
+  "name": "Sloped brick roof",
   "category": "Buildings",
   "order": 375
  },
@@ -2689,31 +2689,31 @@
  },
  {
   "id": 847,
-  "name": "Wooden wall (Block)",
+  "name": "Wooden wall",
   "category": "Blocks",
   "order": 448
  },
  {
   "id": 848,
-  "name": "Light wooden wall (Block)",
+  "name": "Light wooden wall",
   "category": "Blocks",
   "order": 449
  },
  {
   "id": 849,
-  "name": "Painted wall (Block)",
+  "name": "Painted wall",
   "category": "Blocks",
   "order": 450
  },
  {
   "id": 850,
-  "name": "Plaster wall (Block)",
+  "name": "Plaster wall",
   "category": "Blocks",
   "order": 451
  },
  {
   "id": 851,
-  "name": "Cloth wall (Block)",
+  "name": "Cloth wall",
   "category": "Blocks",
   "order": 452
  },
@@ -2725,7 +2725,7 @@
  },
  {
   "id": 853,
-  "name": "Starry-sky wall (Block)",
+  "name": "Starry-sky wall",
   "category": "Blocks",
   "order": 454
  },
@@ -2737,115 +2737,115 @@
  },
  {
   "id": 855,
-  "name": "Modern wall (Block)",
+  "name": "Modern wall",
   "category": "Blocks",
   "order": 456
  },
  {
   "id": 856,
-  "name": "Broken-tiling wall (Block)",
+  "name": "Broken-tiling wall",
   "category": "Blocks",
   "order": 457
  },
  {
   "id": 857,
-  "name": "Cobblestone wall (Block)",
+  "name": "Cobblestone wall",
   "category": "Blocks",
   "order": 458
  },
  {
   "id": 858,
-  "name": "Brick wall (Block)",
+  "name": "Brick wall",
   "category": "Blocks",
   "order": 459
  },
  {
   "id": 859,
-  "name": "Stone brick wall (Block)",
+  "name": "Stone brick wall",
   "category": "Blocks",
   "order": 460
  },
  {
   "id": 860,
-  "name": "Aged-stone wall (Block)",
+  "name": "Aged-stone wall",
   "category": "Blocks",
   "order": 461
  },
  {
   "id": 861,
-  "name": "Patterned aged-stone wall (Block)",
+  "name": "Patterned aged-stone wall",
   "category": "Blocks",
   "order": 462
  },
  {
   "id": 862,
-  "name": "Concrete wall (Block)",
+  "name": "Concrete wall",
   "category": "Blocks",
   "order": 463
  },
  {
   "id": 863,
-  "name": "Rough wall (Block)",
+  "name": "Rough wall",
   "category": "Blocks",
   "order": 464
  },
  {
   "id": 864,
-  "name": "Striped wall (Block)",
+  "name": "Striped wall",
   "category": "Blocks",
   "order": 465
  },
  {
   "id": 865,
-  "name": "Bronze wall (Block)",
+  "name": "Bronze wall",
   "category": "Blocks",
   "order": 466
  },
  {
   "id": 866,
-  "name": "Stylish bronze wall (Block)",
+  "name": "Stylish bronze wall",
   "category": "Blocks",
   "order": 467
  },
  {
   "id": 867,
-  "name": "Iron wall (Block)",
+  "name": "Iron wall",
   "category": "Blocks",
   "order": 468
  },
  {
   "id": 868,
-  "name": "Stylish iron wall (Block)",
+  "name": "Stylish iron wall",
   "category": "Blocks",
   "order": 469
  },
  {
   "id": 869,
-  "name": "Gold wall (Block)",
+  "name": "Gold wall",
   "category": "Blocks",
   "order": 470
  },
  {
   "id": 870,
-  "name": "Stylish gold wall (Block)",
+  "name": "Stylish gold wall",
   "category": "Blocks",
   "order": 471
  },
  {
   "id": 871,
-  "name": "Crystal wall (Block)",
+  "name": "Crystal wall",
   "category": "Blocks",
   "order": 472
  },
  {
   "id": 872,
-  "name": "Poke Ball wall (Block)",
+  "name": "Poke Ball wall",
   "category": "Blocks",
   "order": 473
  },
  {
   "id": 873,
-  "name": "Warning wall (Block)",
+  "name": "Warning wall",
   "category": "Blocks",
   "order": 474
  },
@@ -3019,43 +3019,43 @@
  },
  {
   "id": 899,
-  "name": "Wooden flooring (Block)",
+  "name": "Wooden flooring",
   "category": "Blocks",
   "order": 503
  },
  {
   "id": 900,
-  "name": "Diagonal wooden flooring (Block)",
+  "name": "Diagonal wooden flooring",
   "category": "Blocks",
   "order": 504
  },
  {
   "id": 901,
-  "name": "Crisscross wooden flooring (Block)",
+  "name": "Crisscross wooden flooring",
   "category": "Blocks",
   "order": 505
  },
  {
   "id": 902,
-  "name": "Hardwood flooring (Block)",
+  "name": "Hardwood flooring",
   "category": "Blocks",
   "order": 506
  },
  {
   "id": 903,
-  "name": "Modern carpeting (Block)",
+  "name": "Modern carpeting",
   "category": "Blocks",
   "order": 507
  },
  {
   "id": 904,
-  "name": "Woven carpeting (Block)",
+  "name": "Woven carpeting",
   "category": "Blocks",
   "order": 508
  },
  {
   "id": 905,
-  "name": "Fluffy flooring (Block)",
+  "name": "Fluffy flooring",
   "category": "Blocks",
   "order": 509
  },
@@ -3079,157 +3079,157 @@
  },
  {
   "id": 909,
-  "name": "Felt mat (Block)",
+  "name": "Felt mat",
   "category": "Blocks",
   "order": 513
  },
  {
   "id": 910,
-  "name": "Puffy-tree pillar (Block)",
+  "name": "Puffy-tree pillar",
   "category": "Blocks",
   "order": 514
  },
  {
   "id": 911,
-  "name": "Grass flooring (Block)",
+  "name": "Grass flooring",
   "category": "Blocks",
   "order": 515
  },
  {
   "id": 912,
-  "name": "Simple flooring (Block)",
+  "name": "Simple flooring",
   "category": "Blocks",
   "order": 516
  },
  {
   "id": 913,
-  "name": "Marble (Block)",
+  "name": "Marble",
   "category": "Blocks",
   "order": 517
  },
  {
   "id": 914,
-  "name": "Stone flooring (Block)",
+  "name": "Stone flooring",
   "category": "Blocks",
   "order": 518
  },
  {
   "id": 915,
-  "name": "Lined-stone flooring (Block)",
+  "name": "Lined-stone flooring",
   "category": "Blocks",
   "order": 519
  },
  {
   "id": 916,
-  "name": "Dark marble flooring (Block)",
+  "name": "Dark marble flooring",
   "category": "Blocks",
   "order": 520
  },
  {
   "id": 917,
-  "name": "Light marble flooring (Block)",
+  "name": "Light marble flooring",
   "category": "Blocks",
   "order": 521
  },
  {
   "id": 918,
-  "name": "Aged-stone flooring (Block)",
+  "name": "Aged-stone flooring",
   "category": "Blocks",
   "order": 522
  },
  {
   "id": 919,
-  "name": "Simple square tiling (Block)",
+  "name": "Simple square tiling",
   "category": "Blocks",
   "order": 523
  },
  {
   "id": 920,
-  "name": "Stylish tiling (Block)",
+  "name": "Stylish tiling",
   "category": "Blocks",
   "order": 524
  },
  {
   "id": 921,
-  "name": "Hexagonal flooring (Block)",
+  "name": "Hexagonal flooring",
   "category": "Blocks",
   "order": 525
  },
  {
   "id": 922,
-  "name": "Shop flooring (Block)",
+  "name": "Shop flooring",
   "category": "Blocks",
   "order": 526
  },
  {
   "id": 923,
-  "name": "Triangle-design flooring (Block)",
+  "name": "Triangle-design flooring",
   "category": "Blocks",
   "order": 527
  },
  {
   "id": 924,
-  "name": "Iron-plate flooring (Block)",
+  "name": "Iron-plate flooring",
   "category": "Blocks",
   "order": 528
  },
  {
   "id": 925,
-  "name": "Iron tiling (Block)",
+  "name": "Iron tiling",
   "category": "Blocks",
   "order": 529
  },
  {
   "id": 926,
-  "name": "Neon flooring (Block)",
+  "name": "Neon flooring",
   "category": "Blocks",
   "order": 530
  },
  {
   "id": 927,
-  "name": "Cyber flooring (Block)",
+  "name": "Cyber flooring",
   "category": "Blocks",
   "order": 531
  },
  {
   "id": 928,
-  "name": "Arched tiling (Block)",
+  "name": "Arched tiling",
   "category": "Blocks",
   "order": 532
  },
  {
   "id": 929,
-  "name": "Stone tiling (Block)",
+  "name": "Stone tiling",
   "category": "Blocks",
   "order": 533
  },
  {
   "id": 930,
-  "name": "Square tiling (Block)",
+  "name": "Square tiling",
   "category": "Blocks",
   "order": 534
  },
  {
   "id": 931,
-  "name": "Mosaic tiling (Block)",
+  "name": "Mosaic tiling",
   "category": "Blocks",
   "order": 535
  },
  {
   "id": 932,
-  "name": "Brick flooring (Block)",
+  "name": "Brick flooring",
   "category": "Blocks",
   "order": 536
  },
  {
   "id": 933,
-  "name": "Stylish stone flooring (Block)",
+  "name": "Stylish stone flooring",
   "category": "Blocks",
   "order": 537
  },
  {
   "id": 934,
-  "name": "Fish-scale tiling (Block)",
+  "name": "Fish-scale tiling",
   "category": "Blocks",
   "order": 538
  },
@@ -3259,19 +3259,19 @@
  },
  {
   "id": 939,
-  "name": "Hay pile (Block)",
+  "name": "Hay pile",
   "category": "Blocks",
   "order": 543
  },
  {
   "id": 940,
-  "name": "Iron plating (Block)",
+  "name": "Iron plating",
   "category": "Blocks",
   "order": 544
  },
  {
   "id": 941,
-  "name": "Cube light (Block)",
+  "name": "Cube light",
   "category": "Blocks",
   "order": 545
  },
@@ -3283,127 +3283,127 @@
  },
  {
   "id": 943,
-  "name": "Levee (Block)",
+  "name": "Levee",
   "category": "Blocks",
   "order": 547
  },
  {
   "id": 944,
-  "name": "Scrap cube (Block)",
+  "name": "Scrap cube",
   "category": "Blocks",
   "order": 548
  },
  {
   "id": 945,
-  "name": "Polka-dot print (Block)",
+  "name": "Polka-dot print",
   "category": "Blocks",
   "order": 549
  },
  {
   "id": 946,
-  "name": "Bubble print (Block)",
+  "name": "Bubble print",
   "category": "Blocks",
   "order": 550
  },
  {
   "id": 947,
-  "name": "Vertical-stripe print (Block)",
+  "name": "Vertical-stripe print",
   "category": "Blocks",
   "order": 551
  },
  {
   "id": 948,
-  "name": "Horizontal-stripe print (Block)",
+  "name": "Horizontal-stripe print",
   "category": "Blocks",
   "order": 552
  },
  {
   "id": 949,
-  "name": "Gingham print (Block)",
+  "name": "Gingham print",
   "category": "Blocks",
   "order": 553
  },
  {
   "id": 950,
-  "name": "Tartan print (Block)",
+  "name": "Tartan print",
   "category": "Blocks",
   "order": 554
  },
  {
   "id": 951,
-  "name": "Argyle print (Block)",
+  "name": "Argyle print",
   "category": "Blocks",
   "order": 555
  },
  {
   "id": 952,
-  "name": "Houndstooth print (Block)",
+  "name": "Houndstooth print",
   "category": "Blocks",
   "order": 556
  },
  {
   "id": 953,
-  "name": "Vine print (Block)",
+  "name": "Vine print",
   "category": "Blocks",
   "order": 557
  },
  {
   "id": 954,
-  "name": "Swirl print (Block)",
+  "name": "Swirl print",
   "category": "Blocks",
   "order": 558
  },
  {
   "id": 955,
-  "name": "Winter print (Block)",
+  "name": "Winter print",
   "category": "Blocks",
   "order": 559
  },
  {
   "id": 956,
-  "name": "Zig-zag print (Block)",
+  "name": "Zig-zag print",
   "category": "Blocks",
   "order": 560
  },
  {
   "id": 957,
-  "name": "Leaf print (Block)",
+  "name": "Leaf print",
   "category": "Blocks",
   "order": 561
  },
  {
   "id": 958,
-  "name": "Flower print (Block)",
+  "name": "Flower print",
   "category": "Blocks",
   "order": 562
  },
  {
   "id": 959,
-  "name": "Star print (Block)",
+  "name": "Star print",
   "category": "Blocks",
   "order": 563
  },
  {
   "id": 960,
-  "name": "Curry print (Block)",
+  "name": "Curry print",
   "category": "Blocks",
   "order": 564
  },
  {
   "id": 961,
-  "name": "Berry print (Block)",
+  "name": "Berry print",
   "category": "Blocks",
   "order": 565
  },
  {
   "id": 962,
-  "name": "Poke Ball print (Block)",
+  "name": "Poke Ball print",
   "category": "Blocks",
   "order": 566
  },
  {
   "id": 963,
-  "name": "Stylish Poke Ball print (Block)",
+  "name": "Stylish Poke Ball print",
   "category": "Blocks",
   "order": 567
  },
@@ -4843,13 +4843,13 @@
  },
  {
   "id": 1124,
-  "name": "Ornate wall (Block)",
+  "name": "Ornate wall",
   "category": "Blocks",
   "order": 807
  },
  {
   "id": 1125,
-  "name": "Digital wall (Block)",
+  "name": "Digital wall",
   "category": "Blocks",
   "order": 808
  },
@@ -4903,79 +4903,79 @@
  },
  {
   "id": 1134,
-  "name": "Stately flooring (Block)",
+  "name": "Stately flooring",
   "category": "Blocks",
   "order": 817
  },
  {
   "id": 1135,
-  "name": "Rectangle tiling (Block)",
+  "name": "Rectangle tiling",
   "category": "Blocks",
   "order": 818
  },
  {
   "id": 1136,
-  "name": "Glossy tiling (Block)",
+  "name": "Glossy tiling",
   "category": "Blocks",
   "order": 819
  },
  {
   "id": 1137,
-  "name": "Vibrant glossy tiling (Block)",
+  "name": "Vibrant glossy tiling",
   "category": "Blocks",
   "order": 820
  },
  {
   "id": 1138,
-  "name": "Colorful fish-scale tiling (Block)",
+  "name": "Colorful fish-scale tiling",
   "category": "Blocks",
   "order": 821
  },
  {
   "id": 1139,
-  "name": "Overlapping waves print (Block)",
+  "name": "Overlapping waves print",
   "category": "Blocks",
   "order": 822
  },
  {
   "id": 1140,
-  "name": "Squiggly print (Block)",
+  "name": "Squiggly print",
   "category": "Blocks",
   "order": 823
  },
  {
   "id": 1141,
-  "name": "Dynamic Ditto print (Block)",
+  "name": "Dynamic Ditto print",
   "category": "Blocks",
   "order": 824
  },
  {
   "id": 1142,
-  "name": "Fanned-out Ditto print (Block)",
+  "name": "Fanned-out Ditto print",
   "category": "Blocks",
   "order": 825
  },
  {
   "id": 1143,
-  "name": "Chic anchor print (Block)",
+  "name": "Chic anchor print",
   "category": "Blocks",
   "order": 826
  },
  {
   "id": 1144,
-  "name": "Colorful anchor print (Block)",
+  "name": "Colorful anchor print",
   "category": "Blocks",
   "order": 827
  },
  {
   "id": 1145,
-  "name": "Clustered corals print (Block)",
+  "name": "Clustered corals print",
   "category": "Blocks",
   "order": 828
  },
  {
   "id": 1146,
-  "name": "Colorful corals print (Block)",
+  "name": "Colorful corals print",
   "category": "Blocks",
   "order": 829
  },
