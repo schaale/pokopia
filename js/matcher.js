@@ -340,7 +340,12 @@ const Matcher = (() => {
       if (totalHits === 0) return;
       if (mode === "shared" && pokemonMatched < selected.length) return;
 
-      scored.push({ item, perPoke, totalHits, pokemonMatched, hitMap });
+      // Every resident's comfort is boosted by shared house items, so an item that hits
+      // a few tags for everyone beats one that hits many for some and few for others —
+      // rank by the worst-served Pokémon first, total hits only as a tiebreak.
+      const minHits = Math.min(...perPoke.map((h) => h.length));
+
+      scored.push({ item, perPoke, totalHits, pokemonMatched, minHits, hitMap });
     });
 
     if (!scored.length) {
@@ -352,7 +357,7 @@ const Matcher = (() => {
     const fullyMatched = scored.filter((s) => s.pokemonMatched === selected.length).length;
     document.getElementById("stats").textContent = `${scored.length} items matched · ${fullyMatched} appeal to all ${selected.length}`;
 
-    const sortFn = (a, b) => b.pokemonMatched - a.pokemonMatched || b.totalHits - a.totalHits || a.item.name.localeCompare(b.item.name);
+    const sortFn = (a, b) => b.pokemonMatched - a.pokemonMatched || b.minHits - a.minHits || b.totalHits - a.totalHits || a.item.name.localeCompare(b.item.name);
 
     // Desktop: one horizontally-scrolling carousel per item type.
     let desktopHtml = "";
