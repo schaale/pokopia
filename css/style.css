@@ -427,15 +427,23 @@ textarea { width: 100%; resize: vertical; }
   .site-header { padding: var(--sp-5) var(--sp-3) var(--sp-4); }
 }
 
-.recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--sp-2); }
+/* Fixed 5-per-row, matching the in-game crafting menu's own grid — so "Default" sort order
+   can be scanned side by side against a crafting-menu screenshot. */
+.recipe-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--sp-2); }
 .recipe-row {
-  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 6px; padding: 10px 6px;
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-sm);
   cursor: pointer; transition: border-color .15s, background .15s;
 }
 .recipe-row:hover { border-color: var(--border-strong); }
 .recipe-row.recipe-known { background: var(--good-tint); border-color: rgba(49, 111, 94, 0.35); }
-.recipe-row .recipe-check { flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--good); cursor: pointer; }
-.recipe-row .recipe-name { font-size: 13px; }
+.recipe-row .recipe-check { position: absolute; top: 6px; left: 6px; width: 15px; height: 15px; accent-color: var(--good); cursor: pointer; }
+.recipe-row .item-thumb { width: 44px; height: 44px; }
+.recipe-row .recipe-name { font-size: 11.5px; line-height: 1.3; }
 .recipe-row.recipe-known .recipe-name { color: var(--good); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .recipe-grid { grid-template-columns: repeat(3, 1fr); }
+}
 #recipes-import-text { width: 100%; resize: vertical; }
