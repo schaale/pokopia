@@ -4,6 +4,11 @@
 // marked known, the Matcher can filter down to "craftable now" so you can tell at a
 // glance which stored items are safe to break down for materials: if you can craft it
 // again on demand, you don't need to hoard a spare.
+//
+// The item list itself comes from CraftableItems (data/craftable-items.json), the full
+// 860-recipe crafting menu in its actual in-game order — not PokopiaData.items, which is
+// only the subset of items that carry Pokémon favorite tags and includes non-recipe stuff
+// (materials, fossils, music tracks) that was never craftable to begin with.
 const Recipes = (() => {
   const STORAGE_KEY = "pokopia.knownRecipes";
 
@@ -23,10 +28,11 @@ const Recipes = (() => {
     677, 682, 686, 688, 690, 714, 715, 716, 717, 718, 721, 722,
   ];
 
-  let data = null;
+  let craftable = [];
   let known = new Set();
   let searchTerm = "";
   let onlyUnmarked = false;
+  let sortMode = "default"; // 'default' (game crafting-menu order) | 'az'
 
   function esc(s) {
     const d = document.createElement("div");
@@ -66,8 +72,8 @@ const Recipes = (() => {
     save();
   }
 
-  function init(pokopiaData) {
-    data = pokopiaData;
+  function init(pokopiaData, craftableItems) {
+    craftable = craftableItems;
     load();
     const root = document.getElementById("view-recipes");
     root.innerHTML = `
@@ -79,12 +85,18 @@ const Recipes = (() => {
             in-game crafting menu. Anything checked here can be filtered to in the Matcher, so you know it's safe
             to clear out of storage: you can always craft another. A baseline of confirmed recipes ships with the
             app itself, so it's the same on every device; anything you check beyond that is saved to this browser
-            only (<span id="recipes-count"></span>).
+            only (<span id="recipes-count"></span>). "Default" order matches the crafting menu's own tab-by-tab,
+            row-by-row layout, so you can scan it side by side with the game.
           </p>
           <div class="poke-input-row" style="margin-top:var(--sp-3)">
             <input type="text" class="search-box" id="recipes-search" placeholder="Filter items by name…" style="flex:1">
             <button class="chip" id="recipes-hide-known">Hide checked</button>
             <button class="clear-all" id="recipes-clear">Clear all</button>
+          </div>
+          <div class="mode-row">
+            <span class="lbl">Sort:</span>
+            <button class="chip act" data-sort="default">Default</button>
+            <button class="chip" data-sort="az">A-Z</button>
           </div>
           <details style="margin-top:var(--sp-3)">
             <summary style="cursor:pointer;font-size:12.5px;color:var(--text-dim);font-weight:700">Bulk import (paste item names, one per line or comma-separated)</summary>
@@ -120,13 +132,20 @@ const Recipes = (() => {
       save();
       render();
     });
+    document.querySelectorAll(".mode-row .chip[data-sort]").forEach((chip) => {
+      chip.onclick = () => {
+        sortMode = chip.dataset.sort;
+        document.querySelectorAll(".mode-row .chip[data-sort]").forEach((c) => c.classList.toggle("act", c.dataset.sort === sortMode));
+        render();
+      };
+    });
     document.getElementById("recipes-import-btn").addEventListener("click", () => {
       const raw = document.getElementById("recipes-import-text").value;
       const names = raw.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
       let matched = 0;
       const unmatched = [];
       names.forEach((name) => {
-        const item = data.items.find((it) => it.name.toLowerCase() === name.toLowerCase());
+        const item = craftable.find((it) => it.name.toLowerCase() === name.toLowerCase());
         if (item) { known.add(item.id); matched++; }
         else unmatched.push(name);
       });
@@ -151,17 +170,19 @@ const Recipes = (() => {
   }
 
   function updateStats() {
-    document.getElementById("recipes-count").textContent = `${known.size} of ${data.items.length} marked known`;
+    document.getElementById("recipes-count").textContent = `${known.size} of ${craftable.length} marked known`;
     document.getElementById("recipes-stats").textContent = `${known.size} known`;
   }
 
   function render() {
     updateStats();
     const list = document.getElementById("recipes-list");
-    let items = data.items;
+    let items = craftable;
     if (searchTerm) items = items.filter((it) => it.name.toLowerCase().includes(searchTerm));
     if (onlyUnmarked) items = items.filter((it) => !isKnown(it.id));
-    items = [...items].sort((a, b) => a.name.localeCompare(b.name));
+    items = [...items].sort(sortMode === "az"
+      ? (a, b) => a.name.localeCompare(b.name)
+      : (a, b) => a.order - b.order);
 
     if (!items.length) {
       list.innerHTML = '<div class="empty">No items match the current filters</div>';

@@ -10,8 +10,8 @@ document.querySelectorAll("#page-tabs .page-tab").forEach((tab) => {
   };
 });
 
-PokopiaData.then((data) => {
-  Recipes.init(data);
+Promise.all([PokopiaData, CraftableItems]).then(([data, craftable]) => {
+  Recipes.init(data, craftable);
   Matcher.init(data);
   Cohabitants.init(data);
   Optimizer.init(data);
