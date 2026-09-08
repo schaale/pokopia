@@ -69,7 +69,7 @@
     "id": 728,
     "name": "Poke Ball chest",
     "category": "Furniture",
-    "order": 12
+    "order": 14
   },
   {
     "id": 9,
@@ -81,7 +81,7 @@
     "id": 401,
     "name": "Office locker",
     "category": "Furniture",
-    "order": 14
+    "order": 12
   },
   {
     "id": 622,
@@ -99,19 +99,19 @@
     "id": 11,
     "name": "Antique closet",
     "category": "Furniture",
-    "order": 17
+    "order": 24
   },
   {
     "id": 402,
     "name": "Office shelf",
     "category": "Furniture",
-    "order": 18
+    "order": 21
   },
   {
     "id": 729,
     "name": "Side table",
     "category": "Furniture",
-    "order": 19
+    "order": 17
   },
   {
     "id": 731,
@@ -123,13 +123,13 @@
     "id": 221,
     "name": "Garden table",
     "category": "Furniture",
-    "order": 21
+    "order": 18
   },
   {
     "id": 730,
     "name": "Wooden table",
     "category": "Furniture",
-    "order": 22
+    "order": 19
   },
   {
     "id": 732,
@@ -141,7 +141,7 @@
     "id": 733,
     "name": "Pokemon Center counter",
     "category": "Furniture",
-    "order": 24
+    "order": 22
   },
   {
     "id": 736,
@@ -159,7 +159,7 @@
     "id": 296,
     "name": "Iron stand",
     "category": "Furniture",
-    "order": 27
+    "order": 33
   },
   {
     "id": 201,
@@ -195,7 +195,7 @@
     "id": 400,
     "name": "Office desk",
     "category": "Furniture",
-    "order": 33
+    "order": 27
   },
   {
     "id": 625,
