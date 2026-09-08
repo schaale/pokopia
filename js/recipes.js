@@ -280,6 +280,7 @@ const Recipes = (() => {
       const name = known ? esc(it.name) : "?";
       return `
       <div class="recipe-row${known ? " recipe-known" : ""}" data-item-id="${it.id}" role="button" tabindex="0">
+        <span class="recipe-num">${it.order}</span>
         <span class="recipe-thumb">${thumbHtml(it, known)}</span>
         <span class="recipe-name${known ? "" : " recipe-name-hidden"}">${name}</span>
       </div>
