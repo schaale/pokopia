@@ -19,15 +19,15 @@
   },
   {
     "id": 1177,
-    "name": "Safe",
+    "name": "Unnamed item #1177",
     "category": "Furniture",
-    "order": 4
+    "order": 9
   },
   {
     "id": 1178,
-    "name": "Portal pod",
+    "name": "Unnamed item #1178",
     "category": "Furniture",
-    "order": 5
+    "order": 8
   },
   {
     "id": 452,
@@ -45,13 +45,13 @@
     "id": 726,
     "name": "Portal pod",
     "category": "Furniture",
-    "order": 8
+    "order": 5
   },
   {
     "id": 727,
     "name": "Safe",
     "category": "Furniture",
-    "order": 9
+    "order": 4
   },
   {
     "id": 211,
@@ -1117,9 +1117,9 @@
   },
   {
     "id": 1179,
-    "name": "Decorative Poke Ball",
+    "name": "Unnamed item #1179",
     "category": "Misc.",
-    "order": 187
+    "order": 191
   },
   {
     "id": 23,
@@ -1143,7 +1143,7 @@
     "id": 744,
     "name": "Decorative Poke Ball",
     "category": "Misc.",
-    "order": 191
+    "order": 187
   },
   {
     "id": 25,
