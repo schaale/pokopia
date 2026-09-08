@@ -159,7 +159,7 @@
     "id": 296,
     "name": "Iron stand",
     "category": "Furniture",
-    "order": 33
+    "order": 27
   },
   {
     "id": 201,
@@ -183,7 +183,7 @@
     "id": 456,
     "name": "Plain stand",
     "category": "Furniture",
-    "order": 31
+    "order": 36
   },
   {
     "id": 298,
@@ -195,7 +195,7 @@
     "id": 400,
     "name": "Office desk",
     "category": "Furniture",
-    "order": 27
+    "order": 33
   },
   {
     "id": 625,
@@ -213,13 +213,13 @@
     "id": 264,
     "name": "Industrial desk",
     "category": "Furniture",
-    "order": 36
+    "order": 31
   },
   {
     "id": 133,
     "name": "Cute table",
     "category": "Furniture",
-    "order": 37
+    "order": 54
   },
   {
     "id": 294,
@@ -231,7 +231,7 @@
     "id": 737,
     "name": "Resort table",
     "category": "Furniture",
-    "order": 39
+    "order": 37
   },
   {
     "id": 97,
@@ -243,7 +243,7 @@
     "id": 474,
     "name": "Pop art table",
     "category": "Furniture",
-    "order": 41
+    "order": 39
   },
   {
     "id": 738,
@@ -255,7 +255,7 @@
     "id": 49,
     "name": "Berry table",
     "category": "Furniture",
-    "order": 43
+    "order": 41
   },
   {
     "id": 739,
@@ -273,7 +273,7 @@
     "id": 615,
     "name": "Stone table",
     "category": "Furniture",
-    "order": 46
+    "order": 43
   },
   {
     "id": 336,
@@ -321,7 +321,7 @@
     "id": 44,
     "name": "Berry chair",
     "category": "Furniture",
-    "order": 54
+    "order": 46
   },
   {
     "id": 272,
