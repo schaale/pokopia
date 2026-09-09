@@ -1860,16 +1860,10 @@
     "order": 310
   },
   {
-    "id": 1178,
-    "name": "Unnamed item #1178",
-    "category": "Furniture",
-    "order": 742
-  },
-  {
     "id": 199,
     "name": "Fluorescent light",
     "category": "Utilities",
-    "order": 312
+    "order": 311
   },
   {
     "id": 624,
@@ -1884,22 +1878,16 @@
     "order": 314
   },
   {
-    "id": 1177,
-    "name": "Unnamed item #1177",
-    "category": "Furniture",
-    "order": 743
-  },
-  {
     "id": 472,
     "name": "Pop art lamp",
     "category": "Utilities",
-    "order": 316
+    "order": 315
   },
   {
     "id": 46,
     "name": "Berry hanging lamp",
     "category": "Utilities",
-    "order": 317
+    "order": 316
   },
   {
     "id": 631,
@@ -2110,12 +2098,6 @@
     "name": "Iron gate",
     "category": "Buildings",
     "order": 352
-  },
-  {
-    "id": 1179,
-    "name": "Unnamed item #1179",
-    "category": "Misc.",
-    "order": 353
   },
   {
     "id": 782,
@@ -3225,7 +3207,7 @@
     "id": 676,
     "name": "Wall light",
     "category": "Utilities",
-    "order": 311
+    "order": 317
   },
   {
     "id": 923,
@@ -3237,7 +3219,7 @@
     "id": 212,
     "name": "Gaming light",
     "category": "Utilities",
-    "order": 315
+    "order": 312
   },
   {
     "id": 925,
@@ -3363,7 +3345,7 @@
     "id": 779,
     "name": "Shutter",
     "category": "Buildings",
-    "order": 741
+    "order": 353
   },
   {
     "id": 948,
@@ -4456,11 +4438,5 @@
     "name": "Neon flooring",
     "category": "Blocks",
     "order": 540
-  },
-  {
-    "id": 1203,
-    "name": "Ditto transform print",
-    "category": "Blocks",
-    "order": 744
   }
 ]
