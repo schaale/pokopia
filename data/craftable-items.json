@@ -249,13 +249,13 @@
     "id": 615,
     "name": "Stone table",
     "category": "Furniture",
-    "order": 43
+    "order": 42
   },
   {
     "id": 336,
     "name": "Luxury table",
     "category": "Furniture",
-    "order": 42
+    "order": 43
   },
   {
     "id": 739,
@@ -1863,7 +1863,7 @@
     "id": 1178,
     "name": "Unnamed item #1178",
     "category": "Furniture",
-    "order": 311
+    "order": 742
   },
   {
     "id": 199,
@@ -1887,7 +1887,7 @@
     "id": 1177,
     "name": "Unnamed item #1177",
     "category": "Furniture",
-    "order": 315
+    "order": 743
   },
   {
     "id": 472,
@@ -3225,7 +3225,7 @@
     "id": 676,
     "name": "Wall light",
     "category": "Utilities",
-    "order": 538
+    "order": 311
   },
   {
     "id": 923,
@@ -3237,7 +3237,7 @@
     "id": 212,
     "name": "Gaming light",
     "category": "Utilities",
-    "order": 540
+    "order": 315
   },
   {
     "id": 925,
@@ -3363,7 +3363,7 @@
     "id": 779,
     "name": "Shutter",
     "category": "Buildings",
-    "order": 561
+    "order": 741
   },
   {
     "id": 948,
@@ -4287,7 +4287,7 @@
     "id": 962,
     "name": "Poke Ball print",
     "category": "Blocks",
-    "order": 715
+    "order": 561
   },
   {
     "id": 1059,
@@ -4443,19 +4443,19 @@
     "id": 1057,
     "name": "Large round rug",
     "category": "Other",
-    "order": 741
+    "order": 715
   },
   {
     "id": 924,
     "name": "Iron-plate flooring",
     "category": "Blocks",
-    "order": 742
+    "order": 538
   },
   {
     "id": 926,
     "name": "Neon flooring",
     "category": "Blocks",
-    "order": 743
+    "order": 540
   },
   {
     "id": 1203,
