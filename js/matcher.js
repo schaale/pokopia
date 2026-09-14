@@ -21,7 +21,7 @@ const Matcher = (() => {
   let data = null;
   const selected = []; // [{name, favorites, habitat}]
   let mode = "shared"; // 'all' | 'shared' — default to "Appeals to all"
-  let craftableOnly = false; // when true, limit results to items whose recipe is marked known in Recipes
+  let craftableOnly = false; // when true, limit results to items whose recipe is marked known in Crafting
   let mobileTypeFilter = "all"; // mobile-only: narrows the stacked list to one row type
   let highlightIdx = -1;
 
@@ -69,7 +69,7 @@ const Matcher = (() => {
 
           <div class="mode-row">
             <span class="lbl">Storage cleanup:</span>
-            <button class="chip" id="craftable-only-toggle" title="Only show items whose recipe you've marked known on the Recipes tab — a hoarding hint: if you can craft it again, you don't need to keep a spare.">${Icons.get("box")} Craftable only <span id="craftable-count"></span></button>
+            <button class="chip" id="craftable-only-toggle" title="Only show items whose recipe you've marked known on the Crafting tab — a hoarding hint: if you can craft it again, you don't need to keep a spare.">${Icons.get("box")} Craftable only <span id="craftable-count"></span></button>
           </div>
         </div>
 
