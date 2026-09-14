@@ -106,7 +106,7 @@ const Recipes = (() => {
     root.innerHTML = `
       <div class="container">
         <div class="card">
-          <h2>Craftable recipes <span class="sub">(what you've unlocked, not what exists)</span></h2>
+          <h2>Crafting <span class="sub">(what you've unlocked, not what exists)</span></h2>
           <p style="font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-top:-4px">
             Click an item whose recipe you currently own — i.e. it shows a real thumbnail (not a "?") in your
             in-game crafting menu — to mark it green. Anything green can be filtered to in the Matcher, so you know
@@ -219,6 +219,13 @@ const Recipes = (() => {
       setKnown(id, nowKnown);
       updateStats();
       updateExportBox();
+      // A-Z only ever lists known items (no "?" placeholders), so any click here is an
+      // unmark — the row has to disappear rather than flip to an unknown state in place.
+      if (sortMode === "az") {
+        row.remove();
+        if (!document.querySelector("#recipes-list .recipe-item")) render();
+        return;
+      }
       // "Hide checked" is active and this item just became checked — it should drop out
       // of view rather than sit there contradicting the filter.
       if (onlyUnmarked && nowKnown) {
@@ -270,12 +277,19 @@ const Recipes = (() => {
     updateStats();
     updateExportBox();
     const list = document.getElementById("recipes-list");
+    // "Hide checked" only means something against the default, game-menu-order view — in
+    // A-Z everything shown is already known, so hiding known items would just empty it.
+    document.getElementById("recipes-hide-known").hidden = sortMode === "az";
+
+    if (sortMode === "az") {
+      renderAz(list);
+      return;
+    }
+
     let items = craftable;
     if (searchTerm) items = items.filter((it) => it.name.toLowerCase().includes(searchTerm));
     if (onlyUnmarked) items = items.filter((it) => !isKnown(it.id));
-    items = [...items].sort(sortMode === "az"
-      ? (a, b) => a.name.localeCompare(b.name)
-      : (a, b) => a.order - b.order);
+    items = [...items].sort((a, b) => a.order - b.order);
 
     if (!items.length) {
       list.innerHTML = '<div class="empty">No items match the current filters</div>';
@@ -293,6 +307,27 @@ const Recipes = (() => {
       </div>
     `;
     }).join("") + `</div>`;
+  }
+
+  // A-Z is a plain "what do I actually know how to craft" browse list: only items you've
+  // marked known (no "?" placeholders — there's nothing to alphabetize about an item you
+  // haven't identified yet), one per row, thumbnail + name for fast scanning.
+  function renderAz(list) {
+    let items = craftable.filter((it) => isKnown(it.id));
+    if (searchTerm) items = items.filter((it) => it.name.toLowerCase().includes(searchTerm));
+    items = [...items].sort((a, b) => a.name.localeCompare(b.name));
+
+    if (!items.length) {
+      list.innerHTML = '<div class="empty">No known items match the current filters</div>';
+      return;
+    }
+
+    list.innerHTML = `<div class="recipe-list">` + items.map((it) => `
+      <div class="recipe-item" data-item-id="${it.id}" role="button" tabindex="0">
+        <img class="item-thumb" src="data/images/${it.id}.png" alt="" loading="lazy" onerror="this.remove()">
+        <span class="recipe-item-name">${esc(it.name)}</span>
+      </div>
+    `).join("") + `</div>`;
   }
 
   return { init, isKnown, knownCount };

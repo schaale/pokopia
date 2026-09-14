@@ -187,6 +187,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 0 0 60px; }
   padding: var(--sp-3) 0;
   margin-bottom: 0;
 }
+.chip[hidden] { display: none; }
 .chip {
   font: inherit;
   display: inline-flex;
@@ -459,4 +460,18 @@ textarea { width: 100%; resize: vertical; }
 @media (max-width: 640px) {
   .recipe-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* A-Z: one known item per row, thumbnail left / name right, built for fast scrolling
+   rather than side-by-side comparison against the in-game grid. */
+.recipe-list { display: flex; flex-direction: column; gap: 4px; }
+.recipe-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 6px 10px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; user-select: none; transition: border-color .15s;
+}
+.recipe-item:hover { border-color: var(--border-strong); }
+.recipe-item .item-thumb { width: 36px; height: 36px; flex: none; }
+.recipe-item-name { font-size: 13.5px; font-weight: 600; }
+
 #recipes-import-text { width: 100%; resize: vertical; }
