@@ -1851,7 +1851,7 @@
     "id": 363,
     "name": "Mirror ball",
     "category": "Utilities",
-    "order": 309
+    "order": 320
   },
   {
     "id": 535,
@@ -1905,7 +1905,7 @@
     "id": 8,
     "name": "Antique chandelier",
     "category": "Utilities",
-    "order": 320
+    "order": 317
   },
   {
     "id": 384,
@@ -3207,7 +3207,7 @@
     "id": 676,
     "name": "Wall light",
     "category": "Utilities",
-    "order": 317
+    "order": 309
   },
   {
     "id": 923,
@@ -3417,7 +3417,7 @@
     "id": 956,
     "name": "Zig-zag print",
     "category": "Blocks",
-    "order": 573
+    "order": 575
   },
   {
     "id": 955,
@@ -3429,7 +3429,7 @@
     "id": 960,
     "name": "Curry print",
     "category": "Blocks",
-    "order": 575
+    "order": 579
   },
   {
     "id": 961,
@@ -3453,7 +3453,7 @@
     "id": 963,
     "name": "Stylish Poke Ball print",
     "category": "Blocks",
-    "order": 579
+    "order": 573
   },
   {
     "id": 964,
