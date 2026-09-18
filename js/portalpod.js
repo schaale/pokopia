@@ -60,12 +60,21 @@ const PortalPod = (() => {
 
   // The live, merged material list: baked-in defaults (minus anything the user removed,
   // with any slot-count overrides applied) plus whatever the user has added themselves.
+  // Sorted by natural in-game order (Bulbapedia's item-list order — Materials category
+  // first, then everything else grouped by its own category) so it can be scanned
+  // side by side with the game; materials this app doesn't have a game order for
+  // (anything user-added) sort alphabetically after everything that does.
   function materials() {
     const list = defaults
       .filter((m) => !removed.has(key(m.name)))
-      .map((m) => ({ name: m.name, img: m.img, slots: overrides[key(m.name)] ?? m.slots, isDefault: true }));
-    custom.forEach((c) => list.push({ name: c.name, img: null, slots: c.slots, isDefault: false }));
-    return list.sort((a, b) => b.slots - a.slots || a.name.localeCompare(b.name));
+      .map((m) => ({ name: m.name, img: m.img, order: m.order, slots: overrides[key(m.name)] ?? m.slots, isDefault: true }));
+    custom.forEach((c) => list.push({ name: c.name, img: null, order: null, slots: c.slots, isDefault: false }));
+    return list.sort((a, b) => {
+      if (a.order != null && b.order != null) return a.order - b.order;
+      if (a.order != null) return -1;
+      if (b.order != null) return 1;
+      return a.name.localeCompare(b.name);
+    });
   }
 
   function totalSlots() {
@@ -208,10 +217,12 @@ const PortalPod = (() => {
             and the only thing worth tuning is how many slots each material gets. The starting
             counts are a rough pass over recipe demand plus prefab-building-kit demand; every
             material defaults to at least 1 slot so you can always craft something rather than
-            hoarding a big pile of one thing and zero of another. Adjust freely below — a few
-            materials (no photo, just a letter) aren't in this app's item database yet, and the
-            six crafting berries aren't itemized here at all, so add any of those yourself with
-            the box below if you want them tracked.
+            hoarding a big pile of one thing and zero of another. Both lists below are sorted
+            in natural in-game order (Bulbapedia's Materials category first, then everything
+            else grouped by its own category) so you can scan them next to the game. Adjust
+            freely — a few materials (no photo, just a letter) aren't in this app's item
+            database yet, and the crafting berries aren't itemized here at all, so add any of
+            those yourself with the box below if you want them tracked.
           </p>
           <div class="stat-bar" style="margin-top:var(--sp-4);margin-bottom:0">
             <div class="stat-box"><div class="val" id="pp-total">0</div><div class="lbl">slots allocated</div></div>
