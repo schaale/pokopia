@@ -475,3 +475,60 @@ textarea { width: 100%; resize: vertical; }
 .recipe-item-name { font-size: 13.5px; font-weight: 600; }
 
 #recipes-import-text { width: 100%; resize: vertical; }
+
+/* ---------- Portal Pod ---------- */
+.pp-list { display: flex; flex-direction: column; gap: 6px; }
+.pp-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 8px 12px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.pp-row .item-thumb { width: 32px; height: 32px; flex: none; }
+.pp-name { flex: 1; font-weight: 700; font-size: 13px; }
+.pp-stepper { display: flex; align-items: center; gap: 8px; }
+.pp-stepper button {
+  font: inherit; width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--border-strong); background: var(--panel); color: var(--text);
+  cursor: pointer; font-weight: 800; line-height: 1; display: flex; align-items: center; justify-content: center;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.pp-stepper button:hover { border-color: var(--accent); color: var(--accent); }
+.pp-stepper .pp-count { min-width: 22px; text-align: center; font-weight: 800; font-size: 13px; }
+.pp-remove {
+  font: inherit; background: none; border: none; color: var(--text-faint); cursor: pointer;
+  font-size: 18px; line-height: 1; padding: 0 4px; transition: color var(--dur) var(--ease);
+}
+.pp-remove:hover { color: var(--bad); }
+
+#pp-add-slots { text-align: center; }
+
+.pod-fallback {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--panel-alt); border-radius: var(--radius-sm);
+  color: var(--text-faint); font-weight: 800; font-size: 13px;
+}
+
+.pod-page { margin-bottom: var(--sp-4); }
+.pod-page-label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.pod-slots {
+  display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px;
+  background: var(--panel-alt); padding: var(--sp-3); border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.pod-slot {
+  position: relative; aspect-ratio: 1;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.pod-slot img.item-thumb, .pod-slot .pod-fallback { width: 70%; height: 70%; background: none; }
+.pod-slot .pod-qty {
+  position: absolute; bottom: 2px; right: 4px;
+  font-size: 10px; font-weight: 800; color: var(--text);
+  text-shadow: 0 1px 0 var(--panel), 1px 0 0 var(--panel), 0 -1px 0 var(--panel), -1px 0 0 var(--panel);
+}
+.pod-slot.pod-empty { border-style: dashed; background: transparent; }
+
+@media (max-width: 640px) {
+  .pod-slots { grid-template-columns: repeat(5, 1fr); }
+  .poke-input-row #pp-add-slots { width: 60px; }
+}

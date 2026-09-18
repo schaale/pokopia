@@ -18,3 +18,10 @@ const CraftableItems = fetch("data/craftable-items.json").then((r) => {
   if (!r.ok) throw new Error("Failed to load data/craftable-items.json (" + r.status + ")");
   return r.json();
 });
+
+// Starting slot allocations for the Portal Pod optimizer tab. Shape: [{name, img, slots}] —
+// `img` (when present) is an id into data/images/<img>.png, reusing existing item thumbnails.
+const PortalPodDefaults = fetch("data/portal-pod.json").then((r) => {
+  if (!r.ok) throw new Error("Failed to load data/portal-pod.json (" + r.status + ")");
+  return r.json();
+});

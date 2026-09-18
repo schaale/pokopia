@@ -10,11 +10,12 @@ document.querySelectorAll("#page-tabs .page-tab").forEach((tab) => {
   };
 });
 
-Promise.all([PokopiaData, CraftableItems]).then(([data, craftable]) => {
+Promise.all([PokopiaData, CraftableItems, PortalPodDefaults]).then(([data, craftable, portalPod]) => {
   Recipes.init(data, craftable);
   Matcher.init(data);
   Cohabitants.init(data);
   Optimizer.init(data);
+  PortalPod.init(portalPod);
 
   const meta = document.getElementById("data-meta");
   meta.innerHTML = `Data: ${data.pokemon.length} Pokémon · ${data.items.length} items · ${data.categories.length} preference categories &mdash; as of ${data.meta.sourceDate}. `
