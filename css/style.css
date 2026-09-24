@@ -251,6 +251,7 @@ textarea { width: 100%; resize: vertical; }
 }
 .link-btn .icon { width: 0.95em; height: 0.95em; }
 .link-btn:hover { opacity: 0.65; }
+.link-btn .tag-total { color: var(--text-faint); font-weight: 400; }
 
 .type-pill { padding: 2px 9px; border-radius: var(--radius-pill); font-size: 10px; font-weight: 700; display: inline-block; white-space: nowrap; border: 1px solid transparent; }
 .pill-decor { background: var(--good-tint); color: var(--good); }
