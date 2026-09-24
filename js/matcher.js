@@ -296,7 +296,7 @@ const Matcher = (() => {
         <div class="item-name">${esc(s.item.name)} ${typePill}</div>
       </div>
       <div class="item-row-footer">
-        <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">${Icons.get("tag")} ${tagCount} tag${tagCount === 1 ? "" : "s"}</button>
+        <button class="link-btn tags-toggle" data-target="tags-${s.item.id}" title="${esc(s.item.tags.join(", "))}">${Icons.get("tag")} ${s.totalHits} match${s.totalHits === 1 ? "" : "es"} <span class="tag-total">/ ${tagCount} tags</span></button>
         <div class="scores">${scoresHtml}</div>
       </div>
       <div class="item-tags collapsible-tags" id="tags-${s.item.id}">${tagsHtml}</div>
