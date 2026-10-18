@@ -1848,10 +1848,10 @@
     "order": 308
   },
   {
-    "id": 363,
-    "name": "Mirror ball",
+    "id": 676,
+    "name": "Wall light",
     "category": "Utilities",
-    "order": 320
+    "order": 309
   },
   {
     "id": 535,
@@ -1864,6 +1864,12 @@
     "name": "Fluorescent light",
     "category": "Utilities",
     "order": 311
+  },
+  {
+    "id": 212,
+    "name": "Gaming light",
+    "category": "Utilities",
+    "order": 312
   },
   {
     "id": 624,
@@ -1890,6 +1896,12 @@
     "order": 316
   },
   {
+    "id": 8,
+    "name": "Antique chandelier",
+    "category": "Utilities",
+    "order": 317
+  },
+  {
     "id": 631,
     "name": "Surface light",
     "category": "Utilities",
@@ -1902,10 +1914,10 @@
     "order": 319
   },
   {
-    "id": 8,
-    "name": "Antique chandelier",
+    "id": 363,
+    "name": "Mirror ball",
     "category": "Utilities",
-    "order": 317
+    "order": 320
   },
   {
     "id": 384,
@@ -2098,6 +2110,12 @@
     "name": "Iron gate",
     "category": "Buildings",
     "order": 352
+  },
+  {
+    "id": 779,
+    "name": "Shutter",
+    "category": "Buildings",
+    "order": 353
   },
   {
     "id": 782,
@@ -3036,26 +3054,26 @@
     "order": 509
   },
   {
+    "id": 898,
+    "name": "Pokemon Center wall (trim)",
+    "category": "Blocks",
+    "order": 510
+  },
+  {
     "id": 895,
     "name": "Pokemon Center wall (upper)",
     "category": "Blocks",
-    "order": 510
+    "order": 511
   },
   {
     "id": 896,
     "name": "Pokemon Center wall (middle)",
     "category": "Blocks",
-    "order": 511
+    "order": 512
   },
   {
     "id": 897,
     "name": "Pokemon Center wall (lower)",
-    "category": "Blocks",
-    "order": 512
-  },
-  {
-    "id": 898,
-    "name": "Pokemon Center wall (trim)",
     "category": "Blocks",
     "order": 513
   },
@@ -3204,10 +3222,10 @@
     "order": 537
   },
   {
-    "id": 676,
-    "name": "Wall light",
-    "category": "Utilities",
-    "order": 309
+    "id": 924,
+    "name": "Iron-plate flooring",
+    "category": "Blocks",
+    "order": 538
   },
   {
     "id": 923,
@@ -3216,10 +3234,10 @@
     "order": 539
   },
   {
-    "id": 212,
-    "name": "Gaming light",
-    "category": "Utilities",
-    "order": 312
+    "id": 926,
+    "name": "Neon flooring",
+    "category": "Blocks",
+    "order": 540
   },
   {
     "id": 925,
@@ -3342,10 +3360,10 @@
     "order": 560
   },
   {
-    "id": 779,
-    "name": "Shutter",
-    "category": "Buildings",
-    "order": 353
+    "id": 947,
+    "name": "Vertical-stripe print",
+    "category": "Blocks",
+    "order": 561
   },
   {
     "id": 948,
@@ -3354,44 +3372,44 @@
     "order": 562
   },
   {
-    "id": 947,
-    "name": "Vertical-stripe print",
-    "category": "Blocks",
-    "order": 563
-  },
-  {
     "id": 949,
     "name": "Gingham print",
     "category": "Blocks",
-    "order": 564
+    "order": 563
   },
   {
     "id": 950,
     "name": "Tartan print",
     "category": "Blocks",
-    "order": 565
+    "order": 564
   },
   {
     "id": 951,
     "name": "Argyle print",
     "category": "Blocks",
+    "order": 565
+  },
+  {
+    "id": 961,
+    "name": "Berry print",
+    "category": "Blocks",
     "order": 566
   },
   {
-    "id": 1190,
-    "name": "Unnamed Bubbly Basin item #1190",
+    "id": 962,
+    "name": "Poke Ball print",
     "category": "Blocks",
     "order": 567
   },
   {
-    "id": 953,
-    "name": "Vine print",
+    "id": 963,
+    "name": "Stylish Poke Ball print",
     "category": "Blocks",
     "order": 568
   },
   {
-    "id": 954,
-    "name": "Swirl print",
+    "id": 1190,
+    "name": "Unnamed Bubbly Basin item #1190",
     "category": "Blocks",
     "order": 569
   },
@@ -3408,16 +3426,16 @@
     "order": 571
   },
   {
-    "id": 957,
-    "name": "Leaf print",
+    "id": 953,
+    "name": "Vine print",
     "category": "Blocks",
     "order": 572
   },
   {
-    "id": 956,
-    "name": "Zig-zag print",
+    "id": 954,
+    "name": "Swirl print",
     "category": "Blocks",
-    "order": 575
+    "order": 573
   },
   {
     "id": 955,
@@ -3426,14 +3444,14 @@
     "order": 574
   },
   {
-    "id": 960,
-    "name": "Curry print",
+    "id": 956,
+    "name": "Zig-zag print",
     "category": "Blocks",
-    "order": 579
+    "order": 575
   },
   {
-    "id": 961,
-    "name": "Berry print",
+    "id": 957,
+    "name": "Leaf print",
     "category": "Blocks",
     "order": 576
   },
@@ -3450,10 +3468,10 @@
     "order": 578
   },
   {
-    "id": 963,
-    "name": "Stylish Poke Ball print",
+    "id": 960,
+    "name": "Curry print",
     "category": "Blocks",
-    "order": 573
+    "order": 579
   },
   {
     "id": 964,
@@ -4266,10 +4284,10 @@
     "order": 714
   },
   {
-    "id": 962,
-    "name": "Poke Ball print",
-    "category": "Blocks",
-    "order": 561
+    "id": 1057,
+    "name": "Large round rug",
+    "category": "Other",
+    "order": 715
   },
   {
     "id": 1059,
@@ -4420,23 +4438,5 @@
     "name": "Ninja Poster",
     "category": "Other",
     "order": 740
-  },
-  {
-    "id": 1057,
-    "name": "Large round rug",
-    "category": "Other",
-    "order": 715
-  },
-  {
-    "id": 924,
-    "name": "Iron-plate flooring",
-    "category": "Blocks",
-    "order": 538
-  },
-  {
-    "id": 926,
-    "name": "Neon flooring",
-    "category": "Blocks",
-    "order": 540
   }
 ]
