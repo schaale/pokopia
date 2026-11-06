@@ -15,7 +15,7 @@ Promise.all([PokopiaData, CraftableItems, PortalPodDefaults]).then(([data, craft
   Matcher.init(data);
   Cohabitants.init(data);
   Optimizer.init(data);
-  PortalPod.init(portalPod);
+  PortalPod.init(portalPod, data);
 
   const meta = document.getElementById("data-meta");
   meta.innerHTML = `Data: ${data.pokemon.length} Pokémon · ${data.items.length} items · ${data.categories.length} preference categories &mdash; as of ${data.meta.sourceDate}. `
