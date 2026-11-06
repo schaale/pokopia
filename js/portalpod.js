@@ -63,9 +63,9 @@ const PortalPod = (() => {
 
   // The live, merged material list: baked-in defaults (minus anything the user removed,
   // with any slot-count overrides applied) plus whatever the user has added themselves.
-  // Sorted by natural in-game order (Bulbapedia's item-list order — Materials category
-  // first, then everything else grouped by its own category) so it can be scanned
-  // side by side with the game; materials this app doesn't have a game order for
+  // Sorted by natural in-game order (each material's position in Bulbapedia's item list,
+  // data/item-order.json — Food first, then Materials, Nature, Blocks) so it can be
+  // scanned side by side with the game; materials this app doesn't have a game order for
   // (anything user-added) sort alphabetically after everything that does.
   function materials() {
     const list = defaults

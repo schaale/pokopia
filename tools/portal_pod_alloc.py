@@ -25,19 +25,13 @@ ROOT = Path(__file__).resolve().parent.parent
 POD_CAPACITY = 80
 BULK_MULTIPLIER = 10  # a bulk build ≈ this many crafts of one piece
 
-# Display metadata for materials not already in portal-pod.json: in-game sort order and
-# thumbnail id in data/images. Pokémetal/Rare Pokémetal orders are Bulbapedia's (from the
-# export behind commit e838da8); berries go first, ahead of the Materials block, as in-game;
-# raw rocks and Sandstone aren't in that export, so they sit next to their carved forms.
-NEW_META = {
-    "Pokémetal": {"order": 280, "img": 465},
-    "Rare Pokémetal": {"order": 290, "img": 483},
-    "White rock": {"order": 530, "img": 1209}, "Coarse rock": {"order": 540, "img": 1210},
-    "Light brown rock": {"order": 550, "img": 1211}, "Red rock": {"order": 560, "img": 1212},
-    "Yellow rock": {"order": 570, "img": 1213}, "Sandstone": {"order": 610, "img": 1216},
-    "Leppa Berry": {"order": 15, "img": 1218}, "Chesto Berry": {"order": 11, "img": 1219},
-    "Rawst Berry": {"order": 13, "img": 1220}, "Aspear Berry": {"order": 14, "img": 1221},
-    "Pecha Berry": {"order": 12, "img": 1222}, "Lum Berry": {"order": 16, "img": 1223},
+# Thumbnail ids (data/images/<id>.png) for materials not already in portal-pod.json.
+NEW_IMG = {
+    "Pokémetal": 465, "Rare Pokémetal": 483,
+    "White rock": 1209, "Coarse rock": 1210, "Light brown rock": 1211, "Red rock": 1212,
+    "Yellow rock": 1213, "Sandstone": 1216,
+    "Leppa Berry": 1218, "Chesto Berry": 1219, "Rawst Berry": 1220,
+    "Aspear Berry": 1221, "Pecha Berry": 1222, "Lum Berry": 1223,
 }
 
 SITUATIONAL = {
@@ -60,6 +54,11 @@ FAMILIES = [
     ("wall", r"wall"),
     ("floor", r"floor|tiling|carpet|mat\b|marble|road|plating|hay|rug"),
 ]
+
+
+def norm(name):
+    # Bulbapedia writes "Light brown rock"; the recipe data writes it with a hyphen.
+    return name.lower().replace("-", " ")
 
 
 def is_wallpaper(r):
@@ -111,14 +110,20 @@ def main():
         print(f"  {name:26s} demand {demand.get(name, 0):5d}   now {current.get(name, 0)}  ->  {slots.get(name, 0)}")
     if "--write" in sys.argv:
         meta = {m["name"]: m for m in pod}
+        items = json.loads((ROOT / "data/item-order.json").read_text())
+        order = {}
+        for i, it in enumerate(items):
+            order.setdefault(norm(it["name"]), i + 1)
         out = []
         for name, n in slots.items():
-            m = meta.get(name) or {"name": name, **NEW_META.get(name, {})}
-            if "order" not in m:
-                sys.exit(f"no display order for new material {name!r}; add it to NEW_META")
-            entry = {"name": name, "order": m["order"]}
-            if m.get("img") is not None:
-                entry["img"] = m["img"]
+            # Sort order = position in Bulbapedia's item list (data/item-order.json),
+            # which follows the game's own bag order.
+            if norm(name) not in order:
+                sys.exit(f"{name!r} isn't in data/item-order.json; check the spelling")
+            entry = {"name": name, "order": order[norm(name)]}
+            img = meta.get(name, {}).get("img", NEW_IMG.get(name))
+            if img is not None:
+                entry["img"] = img
             entry["slots"] = n
             out.append(entry)
         out.sort(key=lambda m: m["order"])
