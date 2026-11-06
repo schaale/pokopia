@@ -34,6 +34,8 @@ NEW_IMG = {
     "Yellow rock": 1213, "Sandstone": 1216,
     "Leppa Berry": 1218, "Chesto Berry": 1219, "Rawst Berry": 1220,
     "Aspear Berry": 1221, "Pecha Berry": 1222, "Lum Berry": 1223,
+    # Bubbly Basin materials — Bulbapedia bag sprites (60x60, centered on 64x64).
+    "Shiny pearl": 1224, "Star-spotted rock": 1225, "Blue rock": 1226, "Bumpy beach sand": 1227,
 }
 
 SITUATIONAL = {

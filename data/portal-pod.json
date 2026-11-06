@@ -31,7 +31,7 @@
   { "name": "Glass", "order": 89, "img": 223, "slots": 2 },
   { "name": "Concrete", "order": 90, "img": 106, "slots": 2 },
   { "name": "Paper", "order": 91, "img": 433, "slots": 1 },
-  { "name": "Shiny pearl", "order": 92, "slots": 1 },
+  { "name": "Shiny pearl", "order": 92, "img": 1224, "slots": 1 },
   { "name": "Tinkagear", "order": 93, "img": 646, "slots": 1 },
   { "name": "Strange strings", "order": 94, "img": 1205, "slots": 1 },
   { "name": "Red paint", "order": 97, "img": 488, "slots": 1 },
@@ -45,7 +45,7 @@
   { "name": "Wildflowers", "order": 214, "img": 698, "slots": 1 },
   { "name": "Striped soil", "order": 1306, "img": 1206, "slots": 1 },
   { "name": "Beach sand", "order": 1310, "img": 1207, "slots": 1 },
-  { "name": "Bumpy beach sand", "order": 1312, "slots": 1 },
+  { "name": "Bumpy beach sand", "order": 1312, "img": 1227, "slots": 1 },
   { "name": "Volcanic ash", "order": 1313, "img": 1208, "slots": 1 },
   { "name": "Sandstone", "order": 1314, "img": 1216, "slots": 1 },
   { "name": "White rock", "order": 1324, "img": 1209, "slots": 1 },
@@ -53,8 +53,8 @@
   { "name": "Light brown rock", "order": 1326, "img": 1211, "slots": 1 },
   { "name": "Red rock", "order": 1327, "img": 1212, "slots": 1 },
   { "name": "Yellow rock", "order": 1328, "img": 1213, "slots": 1 },
-  { "name": "Blue rock", "order": 1329, "slots": 1 },
+  { "name": "Blue rock", "order": 1329, "img": 1226, "slots": 1 },
   { "name": "Limestone", "order": 1353, "img": 1214, "slots": 1 },
   { "name": "Glowing stone", "order": 1354, "img": 1215, "slots": 2 },
-  { "name": "Star-spotted rock", "order": 1355, "slots": 2 }
+  { "name": "Star-spotted rock", "order": 1355, "img": 1225, "slots": 2 }
 ]
