@@ -1,4 +1,10 @@
 [
+  { "name": "Chesto Berry", "order": 11, "img": 1219, "slots": 1 },
+  { "name": "Pecha Berry", "order": 12, "img": 1222, "slots": 1 },
+  { "name": "Rawst Berry", "order": 13, "img": 1220, "slots": 1 },
+  { "name": "Aspear Berry", "order": 14, "img": 1221, "slots": 1 },
+  { "name": "Leppa Berry", "order": 15, "img": 1218, "slots": 1 },
+  { "name": "Lum Berry", "order": 16, "img": 1223, "slots": 1 },
   { "name": "Sturdy stick", "order": 20, "img": 626, "slots": 1 },
   { "name": "Stone", "order": 30, "img": 597, "slots": 4 },
   { "name": "Leaf", "order": 40, "img": 1203, "slots": 1 },
@@ -14,13 +20,13 @@
   { "name": "Wastepaper", "order": 140, "img": 687, "slots": 1 },
   { "name": "Copper ore", "order": 170, "img": 115, "slots": 1 },
   { "name": "Iron ore", "order": 180, "img": 280, "slots": 3 },
-  { "name": "Pokémetal", "order": 200, "img": 465, "slots": 4 },
   { "name": "Crystal fragment", "order": 220, "img": 120, "slots": 1 },
   { "name": "Lumber", "order": 230, "img": 328, "slots": 6 },
   { "name": "Brick", "order": 240, "img": 72, "slots": 2 },
   { "name": "Copper ingot", "order": 250, "img": 114, "slots": 1 },
   { "name": "Iron ingot", "order": 260, "img": 278, "slots": 4 },
   { "name": "Gold ingot", "order": 270, "img": 226, "slots": 2 },
+  { "name": "Pokémetal", "order": 280, "img": 465, "slots": 4 },
   { "name": "Glass", "order": 300, "img": 223, "slots": 2 },
   { "name": "Concrete", "order": 310, "img": 106, "slots": 2 },
   { "name": "Paper", "order": 320, "img": 433, "slots": 1 },
@@ -46,11 +52,5 @@
   { "name": "Glowing stone", "order": 600, "img": 1215, "slots": 2 },
   { "name": "Sandstone", "order": 610, "img": 1216, "slots": 1 },
   { "name": "Roserade tea", "order": 620, "img": 1217, "slots": 1 },
-  { "name": "Wildflowers", "order": 650, "img": 698, "slots": 1 },
-  { "name": "Leppa Berry", "order": 660, "img": 1218, "slots": 1 },
-  { "name": "Chesto Berry", "order": 661, "img": 1219, "slots": 1 },
-  { "name": "Rawst Berry", "order": 662, "img": 1220, "slots": 1 },
-  { "name": "Aspear Berry", "order": 663, "img": 1221, "slots": 1 },
-  { "name": "Pecha Berry", "order": 664, "img": 1222, "slots": 1 },
-  { "name": "Lum Berry", "order": 665, "img": 1223, "slots": 1 }
+  { "name": "Wildflowers", "order": 650, "img": 698, "slots": 1 }
 ]

@@ -25,17 +25,19 @@ ROOT = Path(__file__).resolve().parent.parent
 POD_CAPACITY = 80
 BULK_MULTIPLIER = 10  # a bulk build ≈ this many crafts of one piece
 
-# Display metadata for materials not already in portal-pod.json: in-game sort order
-# (slotted next to related materials) and thumbnail id in data/images, if we have one.
+# Display metadata for materials not already in portal-pod.json: in-game sort order and
+# thumbnail id in data/images. Pokémetal/Rare Pokémetal orders are Bulbapedia's (from the
+# export behind commit e838da8); berries go first, ahead of the Materials block, as in-game;
+# raw rocks and Sandstone aren't in that export, so they sit next to their carved forms.
 NEW_META = {
-    "Pokémetal": {"order": 200, "img": 465},
-    "Rare Pokémetal": {"order": 210, "img": 483},
+    "Pokémetal": {"order": 280, "img": 465},
+    "Rare Pokémetal": {"order": 290, "img": 483},
     "White rock": {"order": 530, "img": 1209}, "Coarse rock": {"order": 540, "img": 1210},
     "Light brown rock": {"order": 550, "img": 1211}, "Red rock": {"order": 560, "img": 1212},
     "Yellow rock": {"order": 570, "img": 1213}, "Sandstone": {"order": 610, "img": 1216},
-    "Leppa Berry": {"order": 660, "img": 1218}, "Chesto Berry": {"order": 661, "img": 1219},
-    "Rawst Berry": {"order": 662, "img": 1220}, "Aspear Berry": {"order": 663, "img": 1221},
-    "Pecha Berry": {"order": 664, "img": 1222}, "Lum Berry": {"order": 665, "img": 1223},
+    "Leppa Berry": {"order": 15, "img": 1218}, "Chesto Berry": {"order": 11, "img": 1219},
+    "Rawst Berry": {"order": 13, "img": 1220}, "Aspear Berry": {"order": 14, "img": 1221},
+    "Pecha Berry": {"order": 12, "img": 1222}, "Lum Berry": {"order": 16, "img": 1223},
 }
 
 SITUATIONAL = {
