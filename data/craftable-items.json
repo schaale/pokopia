@@ -3210,20 +3210,20 @@
     "order": 535
   },
   {
-    "id": 921,
-    "name": "Hexagonal flooring",
+    "id": 927,
+    "name": "Cyber flooring",
     "category": "Blocks",
     "order": 536
   },
   {
-    "id": 922,
-    "name": "Shop flooring",
+    "id": 921,
+    "name": "Hexagonal flooring",
     "category": "Blocks",
     "order": 537
   },
   {
-    "id": 924,
-    "name": "Iron-plate flooring",
+    "id": 922,
+    "name": "Shop flooring",
     "category": "Blocks",
     "order": 538
   },
@@ -3234,8 +3234,8 @@
     "order": 539
   },
   {
-    "id": 926,
-    "name": "Neon flooring",
+    "id": 924,
+    "name": "Iron-plate flooring",
     "category": "Blocks",
     "order": 540
   },
@@ -3246,8 +3246,8 @@
     "order": 541
   },
   {
-    "id": 927,
-    "name": "Cyber flooring",
+    "id": 926,
+    "name": "Neon flooring",
     "category": "Blocks",
     "order": 542
   },
