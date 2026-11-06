@@ -17,6 +17,8 @@ const PortalPod = (() => {
   let overrides = {}; // name (lowercased) -> slot count
   let removed = new Set(); // lowercased default names hidden by the user
   let custom = []; // [{name, slots}] materials the user added that aren't in defaults
+  let itemImgs = new Map(); // lowercased item name -> image id, for user-added materials
+  let itemNames = []; // item names in original casing, for the add-box suggestions
 
   function esc(s) {
     const d = document.createElement("div");
@@ -68,7 +70,7 @@ const PortalPod = (() => {
     const list = defaults
       .filter((m) => !removed.has(key(m.name)))
       .map((m) => ({ name: m.name, img: m.img, order: m.order, slots: overrides[key(m.name)] ?? m.slots, isDefault: true }));
-    custom.forEach((c) => list.push({ name: c.name, img: null, order: null, slots: c.slots, isDefault: false }));
+    custom.forEach((c) => list.push({ name: c.name, img: itemImgs.get(key(c.name)) ?? null, order: null, slots: c.slots, isDefault: false }));
     return list.sort((a, b) => {
       if (a.order != null && b.order != null) return a.order - b.order;
       if (a.order != null) return -1;
@@ -115,6 +117,8 @@ const PortalPod = (() => {
       save();
       return;
     }
+    // Picked from the item database (any casing) — store its canonical spelling.
+    name = itemNames.find((n) => key(n) === key(name)) ?? name;
     const existing = custom.find((c) => key(c.name) === key(name));
     if (existing) {
       existing.slots = slots;
@@ -131,11 +135,15 @@ const PortalPod = (() => {
     save();
   }
 
-  function thumbHtml(m) {
+  // `labeled` (pod grid only): with no photo, a lone first letter is useless there — seven
+  // "Carved … rock" slots would all read "C" — so the fallback tile spells out the name.
+  function thumbHtml(m, labeled = false) {
+    const fallback = labeled ? m.name : m.name[0].toUpperCase();
+    const cls = labeled ? "item-thumb pod-fallback pod-fallback-label" : "item-thumb pod-fallback";
     if (m.img != null) {
-      return `<img class="item-thumb" src="data/images/${m.img}.png" alt="" loading="lazy" data-fallback="${escAttr(m.name[0].toUpperCase())}" onerror="PortalPod._imgFail(this)">`;
+      return `<img class="item-thumb" src="data/images/${m.img}.png" alt="" loading="lazy" data-fallback="${escAttr(fallback)}" data-fallback-class="${cls}" onerror="PortalPod._imgFail(this)">`;
     }
-    return `<span class="item-thumb pod-fallback">${esc(m.name[0].toUpperCase())}</span>`;
+    return `<span class="${cls}">${esc(fallback)}</span>`;
   }
 
   // Swaps a broken item thumbnail (material not in our local image set) for a plain
@@ -143,7 +151,7 @@ const PortalPod = (() => {
   // delegated listener on an ancestor can't catch them.
   function imgFail(img) {
     const span = document.createElement("span");
-    span.className = "item-thumb pod-fallback";
+    span.className = img.dataset.fallbackClass || "item-thumb pod-fallback";
     span.textContent = img.dataset.fallback || "?";
     img.replaceWith(span);
   }
@@ -155,6 +163,7 @@ const PortalPod = (() => {
     const freeEl = document.getElementById("pp-free");
     freeEl.textContent = free >= 0 ? free : `${Math.abs(free)} over`;
     freeEl.style.color = free < 0 ? "var(--bad)" : free === 0 ? "var(--good)" : "";
+    document.getElementById("pp-free-lbl").textContent = free < 0 ? "over capacity" : "slots free";
   }
 
   function renderAllocList() {
@@ -165,9 +174,9 @@ const PortalPod = (() => {
         <span class="pp-thumb">${thumbHtml(m)}</span>
         <span class="pp-name">${esc(m.name)}</span>
         <span class="pp-stepper">
-          <button type="button" class="pp-dec" aria-label="Fewer slots">&minus;</button>
+          <button type="button" class="pp-dec" aria-label="Fewer slots"${m.slots <= 1 ? " disabled" : ""}>&minus;</button>
           <span class="pp-count">${m.slots}</span>
-          <button type="button" class="pp-inc" aria-label="More slots">&plus;</button>
+          <button type="button" class="pp-inc" aria-label="More slots"${m.slots >= MAX_QTY ? " disabled" : ""}>&plus;</button>
         </span>
         <button type="button" class="pp-remove" title="Stop tracking this material">&times;</button>
       </div>
@@ -180,15 +189,20 @@ const PortalPod = (() => {
     list.forEach((m) => {
       for (let i = 0; i < m.slots; i++) cells.push(m);
     });
-    const pageCount = Math.max(4, Math.ceil(cells.length / SLOTS_PER_PAGE));
+    const realPages = POD_CAPACITY / SLOTS_PER_PAGE;
+    const pageCount = Math.max(realPages, Math.ceil(cells.length / SLOTS_PER_PAGE));
     let html = "";
     for (let p = 0; p < pageCount; p++) {
       const pageCells = cells.slice(p * SLOTS_PER_PAGE, (p + 1) * SLOTS_PER_PAGE);
       while (pageCells.length < SLOTS_PER_PAGE) pageCells.push(null);
-      html += `<div class="pod-page">
-        <div class="pod-page-label">Page ${p + 1}</div>
+      // Pages past the real 4 don't exist in-game: show the spillover so it's obvious
+      // what won't fit, but flag it rather than pretend the pod is bigger.
+      const over = p >= realPages;
+      if (over && pageCells.every((m) => !m)) continue;
+      html += `<div class="pod-page${over ? " pod-page-over" : ""}">
+        <div class="pod-page-label">${over ? "Won't fit — over capacity" : `Page ${p + 1}`}</div>
         <div class="pod-slots">${pageCells.map((m) => m
-          ? `<div class="pod-slot" title="${escAttr(m.name)}">${thumbHtml(m)}<span class="pod-qty">${MAX_QTY}</span></div>`
+          ? `<div class="pod-slot" data-name="${escAttr(m.name)}" title="${escAttr(m.name)}">${thumbHtml(m, true)}<span class="pod-qty">${MAX_QTY}</span></div>`
           : `<div class="pod-slot pod-empty"></div>`
         ).join("")}</div>
       </div>`;
@@ -200,10 +214,39 @@ const PortalPod = (() => {
     renderSummary();
     renderAllocList();
     renderGrid();
+    renderSuggestions();
   }
 
-  function init(portalPodDefaults) {
+  // Row <-> slot cross-highlighting, so it's clear which grid cells a row's count maps to.
+  function setHighlight(name) {
+    document.querySelectorAll("#view-portalpod .pp-hl").forEach((el) => el.classList.remove("pp-hl"));
+    if (name == null) return;
+    document.querySelectorAll("#view-portalpod [data-name]").forEach((el) => {
+      if (el.dataset.name === name) el.classList.add("pp-hl");
+    });
+  }
+
+  function renderSuggestions() {
+    // Default names (removed ones included, so they're easy to bring back) first, then
+    // every other item in the database — picking one of those also gets its photo.
+    const tracked = new Set(materials().map((m) => key(m.name)));
+    const names = [...defaults.map((m) => m.name), ...itemNames];
+    const seen = new Set();
+    document.getElementById("pp-suggest").innerHTML = names
+      .filter((n) => { const k = key(n); if (seen.has(k) || tracked.has(k)) return false; seen.add(k); return true; })
+      .map((n) => `<option value="${escAttr(n)}"></option>`).join("");
+  }
+
+  function init(portalPodDefaults, data) {
     defaults = portalPodDefaults;
+    itemImgs = new Map();
+    itemNames = data ? data.items.map((it) => it.name).sort((a, b) => a.localeCompare(b)) : [];
+    if (data) {
+      data.items.forEach((it) => {
+        // Keep the original casing for the suggestion list; the map key is only for lookup.
+        if (!itemImgs.has(key(it.name))) itemImgs.set(key(it.name), it.id);
+      });
+    }
     load();
 
     const root = document.getElementById("view-portalpod");
@@ -212,42 +255,51 @@ const PortalPod = (() => {
         <div class="card">
           <h2>Portal Pod <span class="sub">optimize your 80-slot loadout</span></h2>
           <p class="hint">
-            The pod holds 80 slots (20 per page × 4 pages), and a slot costs the same whether
-            it's got 1 unit in it or the 99-unit cap — so every slot below is assumed maxed,
-            and the only thing worth tuning is how many slots each material gets. The starting
-            counts are a rough pass over recipe demand plus prefab-building-kit demand; every
-            material defaults to at least 1 slot so you can always craft something rather than
-            hoarding a big pile of one thing and zero of another. Both lists below are sorted
-            in natural in-game order (Bulbapedia's Materials category first, then everything
-            else grouped by its own category) so you can scan them next to the game. Adjust
-            freely — a few materials (no photo, just a letter) aren't in this app's item
-            database yet, and the crafting berries aren't itemized here at all, so add any of
-            those yourself with the box below if you want them tracked.
+            A slot costs the same whether it holds 1 unit or the 99-unit cap, so every slot
+            here is assumed maxed — the only thing to tune is how many slots each material gets.
           </p>
+          <details class="pp-about">
+            <summary>Where the defaults come from</summary>
+            <p class="hint">
+              The starting counts are a rough pass over recipe demand plus prefab-building-kit
+              demand, and every material gets at least 1 slot so you can always craft something
+              rather than hoarding a big pile of one thing and zero of another. Both lists are in
+              natural in-game order (Bulbapedia's Materials category first, then everything else
+              grouped by its own category) so you can scan them next to the game. A few materials
+              aren't in this app's item database yet (they show a name tile instead of a photo),
+              and crafting berries aren't itemized at all — add any of those with the box below.
+            </p>
+          </details>
           <div class="stat-bar" style="margin-top:var(--sp-4);margin-bottom:0">
             <div class="stat-box"><div class="val" id="pp-total">0</div><div class="lbl">slots allocated</div></div>
             <div class="stat-box"><div class="val">${POD_CAPACITY}</div><div class="lbl">pod capacity</div></div>
-            <div class="stat-box"><div class="val" id="pp-free">0</div><div class="lbl">free / over</div></div>
+            <div class="stat-box"><div class="val" id="pp-free">0</div><div class="lbl" id="pp-free-lbl">slots free</div></div>
           </div>
         </div>
 
-        <div class="rh" style="margin-top:var(--sp-5)">
-          <h2>Allocations</h2>
-          <span class="stats" id="pp-alloc-stats"></span>
+        <div class="pp-layout">
+          <div class="pp-col-alloc">
+            <div class="rh" style="margin-top:var(--sp-5)">
+              <h2>Allocations</h2>
+              <span class="stats" id="pp-alloc-stats"></span>
+            </div>
+            <div class="poke-input-row">
+              <input type="text" class="search-box" id="pp-add-name" list="pp-suggest" placeholder="Add a material by name…" style="flex:1;margin-bottom:0">
+              <datalist id="pp-suggest"></datalist>
+              <input type="number" id="pp-add-slots" min="1" max="99" value="1" style="width:70px" aria-label="Slots">
+              <button class="chip" id="pp-add-btn">Add</button>
+              <button class="clear-all" id="pp-reset">Reset to defaults</button>
+            </div>
+            <div id="pp-alloc-list" class="pp-list" style="margin-top:var(--sp-3)"></div>
+          </div>
+          <div class="pp-col-grid">
+            <div class="rh" style="margin-top:var(--sp-5)">
+              <h2>Pod preview</h2>
+              <span class="stats">mimics the in-game grid — everything maxed to 99</span>
+            </div>
+            <div id="pp-grid"></div>
+          </div>
         </div>
-        <div class="poke-input-row">
-          <input type="text" class="search-box" id="pp-add-name" placeholder="Add a material by name…" style="flex:1;margin-bottom:0">
-          <input type="number" id="pp-add-slots" min="1" max="99" value="1" style="width:70px">
-          <button class="chip" id="pp-add-btn">Add</button>
-          <button class="clear-all" id="pp-reset">Reset to defaults</button>
-        </div>
-        <div id="pp-alloc-list" class="pp-list" style="margin-top:var(--sp-3)"></div>
-
-        <div class="rh" style="margin-top:var(--sp-5)">
-          <h2>Pod preview</h2>
-          <span class="stats">mimics the in-game grid — photo only, everything maxed to 99</span>
-        </div>
-        <div id="pp-grid"></div>
       </div>
     `;
 
@@ -262,6 +314,29 @@ const PortalPod = (() => {
       else if (e.target.classList.contains("pp-remove")) removeMaterial(name);
       else return;
       render();
+      // Re-rendering replaced the hovered row; keep its slots lit while the pointer's still on it.
+      if (!e.target.classList.contains("pp-remove")) setHighlight(name);
+    });
+
+    const allocList = document.getElementById("pp-alloc-list");
+    const grid = document.getElementById("pp-grid");
+    [allocList, grid].forEach((el) => {
+      el.addEventListener("mouseover", (e) => {
+        const hit = e.target.closest("[data-name]");
+        setHighlight(hit ? hit.dataset.name : null);
+      });
+      el.addEventListener("mouseleave", () => setHighlight(null));
+    });
+    // Clicking a pod slot jumps to (and flashes) the row that controls it.
+    grid.addEventListener("click", (e) => {
+      const slot = e.target.closest(".pod-slot[data-name]");
+      if (!slot) return;
+      const row = [...allocList.querySelectorAll(".pp-row")].find((r) => r.dataset.name === slot.dataset.name);
+      if (!row) return;
+      row.scrollIntoView({ block: "center", behavior: "smooth" });
+      row.classList.remove("pp-flash");
+      void row.offsetWidth; // restart the animation if it's clicked twice in a row
+      row.classList.add("pp-flash");
     });
 
     document.getElementById("pp-add-btn").addEventListener("click", () => {
