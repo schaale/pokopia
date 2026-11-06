@@ -7,6 +7,8 @@ Goal: when out in the field, any everyday recipe can be crafted from what's in t
      actually crafted: furniture/decor is made ad hoc one at a time, but blocks, floors,
      walls, roofs, fences, stairs, paths, pillars, pipes etc. are always made in bulk.
 
+Covers the base game plus the Bubbly Basin DLC (recipes tagged "dlc").
+
 Out of scope: wallpaper versions of blocks (the "Other"-tab Paper x6 recipes), kits
 (bought at the PC Shop, built on site), and one-off/situational items (Dowsing Machine,
 Star Piece, legendary bells, armor, the Portal pod itself).
@@ -61,8 +63,17 @@ def norm(name):
     return name.lower().replace("-", " ")
 
 
-def is_wallpaper(r):
-    return r["category"] == "Other" and r["materials"] == [{"name": "Paper", "qty": 6}]
+def is_wallpaper(r, block_names):
+    # Wallpaper versions live on the Other tab under the same name as their block
+    # (usually Paper x6, but a couple of DLC ones differ, so match on the name).
+    if r["category"] != "Other":
+        return False
+    return r["materials"] == [{"name": "Paper", "qty": 6}] or base_name(r) in block_names
+
+
+def base_name(r):
+    # "Stately wall (upper/lower)" -> "stately wall"
+    return re.sub(r"\s*\(.*?\)", "", r["name"]).lower()
 
 
 def is_bulk(r):
@@ -82,9 +93,10 @@ def main():
     recipes = json.loads((ROOT / "data/recipes.json").read_text())
     pod = json.loads((ROOT / "data/portal-pod.json").read_text())
 
+    block_names = {base_name(r) for r in recipes if r["category"] in ("Blocks", "Buildings")}
     in_scope = [r for r in recipes
                 if r["category"] != "Kits" and r["materials"]
-                and not is_wallpaper(r) and r["name"] not in SITUATIONAL]
+                and not is_wallpaper(r, block_names) and r["name"] not in SITUATIONAL]
 
     demand = Counter()
     families = defaultdict(list)
