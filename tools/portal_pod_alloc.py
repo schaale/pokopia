@@ -30,12 +30,12 @@ BULK_MULTIPLIER = 10  # a bulk build ≈ this many crafts of one piece
 NEW_META = {
     "Pokémetal": {"order": 200, "img": 465},
     "Rare Pokémetal": {"order": 210, "img": 483},
-    "White rock": {"order": 530}, "Coarse rock": {"order": 540},
-    "Light brown rock": {"order": 550}, "Red rock": {"order": 560},
-    "Yellow rock": {"order": 570}, "Sandstone": {"order": 610},
-    "Leppa Berry": {"order": 660}, "Chesto Berry": {"order": 661},
-    "Rawst Berry": {"order": 662}, "Aspear Berry": {"order": 663},
-    "Pecha Berry": {"order": 664}, "Lum Berry": {"order": 665},
+    "White rock": {"order": 530, "img": 1209}, "Coarse rock": {"order": 540, "img": 1210},
+    "Light brown rock": {"order": 550, "img": 1211}, "Red rock": {"order": 560, "img": 1212},
+    "Yellow rock": {"order": 570, "img": 1213}, "Sandstone": {"order": 610, "img": 1216},
+    "Leppa Berry": {"order": 660, "img": 1218}, "Chesto Berry": {"order": 661, "img": 1219},
+    "Rawst Berry": {"order": 662, "img": 1220}, "Aspear Berry": {"order": 663, "img": 1221},
+    "Pecha Berry": {"order": 664, "img": 1222}, "Lum Berry": {"order": 665, "img": 1223},
 }
 
 SITUATIONAL = {
